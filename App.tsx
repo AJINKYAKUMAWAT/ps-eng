@@ -19,6 +19,11 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Reanimated from './screens/Reanimated';
 import EmojiPickerComponent from './components/EmojiPicker';
 import PhoneCall from './screens/PhoneCall';
+import MyTabs from './components/BottomTabs/BottomTabs';
+import AboutUs from './components/AboutUs/AboutUs';
+import { ContactUs } from './components/ContactUs/ContactUs';
+import { useScrollToTop } from '@react-navigation/native';
+
 
 const Drawer = createDrawerNavigator();
 
@@ -29,17 +34,21 @@ function CustomDrawerContent(props: any) {
         <TouchableOpacity onPress={() => props.navigation.toggleDrawer()}>
           <Avatar.Image size={40} source={{uri: 'https://picsum.photos/700'}} />
         </TouchableOpacity>
-        <Title style={styles.drawerHeaderText}>Ajinkya Kumawat</Title>
+        <Title style={styles.drawerHeaderText}>PS ENGG</Title>
       </View>
       <DrawerItemList {...props} />
     </DrawerContentScrollView>
   );
 }
 
-function HomeScreen() {
+export function HomeScreen() {
+  const ref = React.useRef(null);
+
+  useScrollToTop(ref);
+  
   return (
     <SafeAreaView style={styles.safeArea}>
-      <ScrollView contentContainerStyle={styles.scrollViewContent}>
+      <ScrollView contentContainerStyle={styles.scrollViewContent} ref={ref}>
         <Reanimated />
       </ScrollView>
     </SafeAreaView>
@@ -71,8 +80,8 @@ export default function App() {
             ),
           })}>
           <Drawer.Screen
-            name="Home"
-            component={HomeScreen}
+            name="Dashboard"
+            component={MyTabs}
             options={{
               headerTitleAlign:'center',
               headerTitle: () => <Text style={{color:'#000',fontSize:20}}>Dashboard</Text>,
@@ -89,7 +98,7 @@ export default function App() {
               ),
             }}
             name="About us"
-            component={EmojiPickerComponent}
+            component={AboutUs}
           />
           <Drawer.Screen
             options={{
@@ -99,7 +108,7 @@ export default function App() {
               ),
             }}
             name="Contact Us"
-            component={PhoneCall}
+            component={ContactUs}
           />
         </Drawer.Navigator>
       </NavigationContainer>
