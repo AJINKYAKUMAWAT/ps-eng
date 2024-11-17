@@ -22,7 +22,7 @@ import PhoneCall from './screens/PhoneCall';
 
 const Drawer = createDrawerNavigator();
 
-function CustomDrawerContent(props:any) {
+function CustomDrawerContent(props: any) {
   return (
     <DrawerContentScrollView {...props}>
       <View style={styles.drawerHeader}>
@@ -49,57 +49,61 @@ function HomeScreen() {
 export default function App() {
   return (
     <PaperProvider>
-    <NavigationContainer>
-      <Drawer.Navigator
-        drawerContent={props => <CustomDrawerContent {...props} />}
-        screenOptions={({navigation}) => ({
-          headerStyle: {
-            backgroundColor: '#F3F3F2',
-          },
-          headerTitle: () => <Text style={styles.headerTitle}>Hello</Text>,
-          headerRight: () => (
-            <View style={styles.headerRight}>
-             
-             <TouchableOpacity>
-  <Image
-    source={{
-      uri: 'https://s3-alpha-sig.figma.com/img/e64d/4d58/b2560587e5fc7809c455300a88632ea6?Expires=1732492800&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=dSUCONtE7jXmP82eSiOI9j-iLa5y2UsUhZu9WlOHRrARcFEJSfUp~I3no1cUOzVzllNwwNgiJ-FOOBeHjGfVmVOxARr1mBFF09TMfvWIDx44mTlWvmozZ8iPSq-3WLJ6XbrkML1H8K9~lP0jcxeUsh1AmNlbgVUTb0aq6tdXhuJAzLQYyU~YP-ywl8630qTJOsa3l4GgRGZEY~m7dxqHYFxXac7elGc78ofP06iAQapbngsAykvNyRc7C6xcML~rpNL2ishEwC39mcuw30gRUZpOLtvAtcNmcL3TmvptI-15tjF1NcShm1YEgpUEYRtEbfPAIoFQxHBzyngv15TL0g__',
-    }}
-    style={styles.customIcon}
-  />
-</TouchableOpacity>
-
-              
-            </View>
-          ),
-        })}
-        
-        >
-        <Drawer.Screen
-          name="Home"
-          component={HomeScreen}
-          options={{
-            headerTitle: () => <Text>Helo</Text>,
-            drawerIcon: ({color, size}) => (
-              <Icon name="home" color={color} size={size} />
+      <NavigationContainer>
+        <Drawer.Navigator
+          drawerContent={props => <CustomDrawerContent {...props} />}
+          screenOptions={({navigation}) => ({
+            headerStyle: {
+              backgroundColor: '#F3F3F2',
+            },
+            headerTitle: () => <Text style={styles.headerTitle}>Hello</Text>,
+            headerRight: () => (
+              <View style={styles.headerRight}>
+                <TouchableOpacity>
+                  <Image
+                    source={{
+                      uri: 'https://s3-alpha-sig.figma.com/img/e64d/4d58/b2560587e5fc7809c455300a88632ea6?Expires=1732492800&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=dSUCONtE7jXmP82eSiOI9j-iLa5y2UsUhZu9WlOHRrARcFEJSfUp~I3no1cUOzVzllNwwNgiJ-FOOBeHjGfVmVOxARr1mBFF09TMfvWIDx44mTlWvmozZ8iPSq-3WLJ6XbrkML1H8K9~lP0jcxeUsh1AmNlbgVUTb0aq6tdXhuJAzLQYyU~YP-ywl8630qTJOsa3l4GgRGZEY~m7dxqHYFxXac7elGc78ofP06iAQapbngsAykvNyRc7C6xcML~rpNL2ishEwC39mcuw30gRUZpOLtvAtcNmcL3TmvptI-15tjF1NcShm1YEgpUEYRtEbfPAIoFQxHBzyngv15TL0g__',
+                    }}
+                    style={styles.customIcon}
+                  />
+                </TouchableOpacity>
+              </View>
             ),
-          }}
-        />
-        <Drawer.Screen options={{
-            headerTitle: () => <Text>Helo</Text>,
-            drawerIcon: ({color, size}) => (
-              <Icon name="book-open-outline" color={color} size={size} />
-            ),
-          }} name="About us" component={EmojiPickerComponent} />
-        <Drawer.Screen options={{
-            headerTitle: () => <Text>Helo</Text>,
-            drawerIcon: ({color, size}) => (
-              <Icon name="phone" color={color} size={size} />
-            ),
-          }} name="Contact Us" component={PhoneCall} />
-      </Drawer.Navigator>
-    </NavigationContainer>
-  </PaperProvider>
+          })}>
+          <Drawer.Screen
+            name="Home"
+            component={HomeScreen}
+            options={{
+              headerTitleAlign:'center',
+              headerTitle: () => <Text style={{color:'#000',fontSize:20}}>Dashboard</Text>,
+              drawerIcon: ({color, size}) => (
+                <Icon name="home" color={color} size={size} />
+              ),
+            }}
+          />
+          <Drawer.Screen
+            options={{
+              headerTitle: () => <Text>Helo</Text>,
+              drawerIcon: ({color, size}) => (
+                <Icon name="book-open-outline" color={color} size={size} />
+              ),
+            }}
+            name="About us"
+            component={EmojiPickerComponent}
+          />
+          <Drawer.Screen
+            options={{
+              headerTitle: () => <Text>Helo</Text>,
+              drawerIcon: ({color, size}) => (
+                <Icon name="phone" color={color} size={size} />
+              ),
+            }}
+            name="Contact Us"
+            component={PhoneCall}
+          />
+        </Drawer.Navigator>
+      </NavigationContainer>
+    </PaperProvider>
   );
 }
 
@@ -143,9 +147,9 @@ const styles = StyleSheet.create({
   drawerHeaderText: {
     marginLeft: 10,
     fontSize: 16,
-    color:'#000'
+    color: '#000',
   },
-  
+
   logoContainer: {
     flex: 1,
     justifyContent: 'center',
