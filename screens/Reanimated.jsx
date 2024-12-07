@@ -5,7 +5,7 @@ import {AnimatedCircularProgress} from 'react-native-circular-progress';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 
-export default function Reanimated() {
+export default function Dashboard() {
   return (
     <View style={styles.container}>
        <View style={styles.animatedContainer9}>

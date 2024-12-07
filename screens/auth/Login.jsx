@@ -1,15 +1,21 @@
-import { StyleSheet, Text, View } from 'react-native';
-import React, {useState } from 'react';
-import Input from '../AtomicComponents/Input';
-import { useNavigation } from '@react-navigation/native';
-import Button from '../AtomicComponents/Button';
-import { useToast } from 'react-native-toast-notifications';
-import { Loader } from '../AtomicComponents/Loader.jsx';
-import Header from '../AtomicComponents/Header.jsx';
-import { typography } from '../theme/typography.jsx';
+import {StyleSheet, Text, View} from 'react-native';
+import React, {useState} from 'react';
+import Input from '../../AtomicComponents/Input';
+import {useNavigation} from '@react-navigation/native';
+import Button from '../../AtomicComponents/Button';
+import {useToast} from 'react-native-toast-notifications';
+import {Loader} from '../../AtomicComponents/Loader.jsx';
+import {typography} from '../../theme/typography.jsx';
+import Header from '../../AtomicComponents/Header.jsx';
+import InputWithIcon from '../../AtomicComponents/InputWithIcon.jsx';
 
 const LoginScreeen = () => {
   const [otpLoader, setOtpLoader] = useState(false);
+  const [loginObj, setLoginObj] = useState({
+    username: '',
+    password: '',
+  });
+  const [passwordHide,setPasswordHide] = useState(true)
   const toast = useToast();
 
   const navigation = useNavigation();
@@ -20,11 +26,10 @@ const LoginScreeen = () => {
     passwordError: ' ',
   });
 
-
   const handleSignInOtp = e => {
-    setOtpLoader(true)
+    setOtpLoader(true);
     e.preventDefault();
-    
+
     // const toastId = toast.show("success", {
     //   data: {
     //     type: 'success',
@@ -45,9 +50,9 @@ const LoginScreeen = () => {
   return (
     <View style={styles.wrapper}>
       <View style={styles.container}>
-        <Header ImageHeadingComponent={""} />
+        <Header ImageHeadingComponent={''} />
         <View>
-          <View style={{ marginTop: 16 }}>
+          <View style={{marginTop: 16}}>
             <Text style={styles.heading}>Sign in</Text>
             <Text style={styles.foregroundText}>
               Sign in with your mobile no.
@@ -55,34 +60,36 @@ const LoginScreeen = () => {
           </View>
         </View>
 
-        <View style={styles.formConatiner}>
-          <View style={styles.inputFieldContainer}>
-            <Input
-              label="Mobile Number"
-              autoFocus={true}
-              value={phoneNumber}
-              placeholder="Enter Registered Mobile Number"
-              placeholderTextColor={'#747373'}
-              keyboardType="numeric"
-              maxLength={10}
-              onChangeText={(text) => {
-                // Only allow digits (0-9) by using a regex to replace non-numeric characters
-                const filteredText = text.replace(/[^0-9]/g, '');
-                setPhoneNumber(filteredText);
-              }}
-              errorMessage={validation.phoneNumberError}
-            />
-          </View>
-
-          <View style={styles.buttonContainer}>           
+        <View style={styles.formConatiner}>        
+          <InputWithIcon
+            placeholder="Name"
+            iconName="account"
+            value={loginObj.username}
+            keyboardType="default" // Use "default" for text input
+            onChangeText={text => setLoginObj({...loginObj, username: text})}
+          />
+          <InputWithIcon
+            placeholder="Password"
+            iconName="lock"
+            value={loginObj.password}
+            keyboardType={passwordHide ? "password" : "default"} // Use "default" for text input
+            onChangeText={text => setLoginObj({...loginObj, password: text})}
+            passwordVisible='eye-outline'
+            passwordUnVisible="eye-off-outline"
+            passwordHide={passwordHide}
+            passwordIconClick={setPasswordHide}
+          />
+          <View style={styles.buttonContainer}>
             <Button
               asTouchable
               title="Sign In via OTP"
               style={styles.signInOtpBtn}
               onPress={handleSignInOtp}>
-              {otpLoader ? <Loader size={"small"} /> :
-                <Text style={styles.signInOtpText}>Sign in via OTP</Text>
-              }
+              {otpLoader ? (
+                <Loader size={'small'} />
+              ) : (
+                <Text style={styles.signInOtpText}>Sign in</Text>
+              )}
             </Button>
           </View>
         </View>
@@ -127,14 +134,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 6,
     paddingVertical: 4,
     borderWidth: 1,
-    borderColor: "#213578",
+    borderColor: '#213578',
     height: 48,
-
   },
   signInOtpBtn: {
     borderWidth: 1,
     borderStyle: 'solid',
-    borderColor: '#213578',
+    borderColor: '#fff',
     borderRadius: 8,
     paddingHorizontal: 16,
     paddingVertical: 8,
@@ -144,7 +150,7 @@ const styles = StyleSheet.create({
   signInOtpText: {
     fontSize: 16,
     // fontWeight: '700',
-    color: '#213578',
+    color: '#fff',
     fontFamily: typography.bold,
   },
   foregroundText: {

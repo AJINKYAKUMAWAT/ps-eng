@@ -21,6 +21,8 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     justifyContent: 'center',
     alignItems: 'center',
+    height:55,
+    backgroundColor:'#4894FE'
   },
   disabledButton: {
     opacity: 0.7,
