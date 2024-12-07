@@ -27,7 +27,7 @@ import { useScrollToTop } from '@react-navigation/native';
 
 const Drawer = createDrawerNavigator();
 
-function CustomDrawerContent(props: any) {
+function CustomDrawerContent(props) {
   return (
     <DrawerContentScrollView {...props}>
       <View style={styles.drawerHeader}>
