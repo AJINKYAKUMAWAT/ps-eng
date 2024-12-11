@@ -9,4 +9,7 @@ export const typography = {
   secondary: 'UniNeue-Light',
   bold: 'Fontfabric - UniNeueBold',
   semiBold: 'BeVietnamPro-SemiBold',
+  primary: 'Poppins-Regular',
+  boldPoppins: 'Poppins-Bold',
+  italic: 'Poppins-Italic',
 };

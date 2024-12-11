@@ -40,39 +40,70 @@ export const { setAuthLoading, login, logout, setInitialized } =
   authSlice.actions;
 export default authSlice.reducer;
 
-const getToken = async (credentails) => {
+const getToken = async (credentials) => {
   try {
-    if (accessToken && refreshToken) return { accessToken, refreshToken };
-
-    const { data } = await axiosInstance.post(API_ENDPOINT.LOGIN, credentails);
-    return data;
+    const response = await axiosInstance.post(
+      API_ENDPOINT.LOGIN,
+      {}, // Pass an empty body since the parameters are in headers
+      {
+        headers: {
+          userName: credentials.userName,
+          password: credentials.password,
+          xAction: 'generateToken',
+        },
+      }
+    );
+    console.log("response",response)
+    return response.data;
   } catch (error) {
+    console.error('Error during login:', error);
     throw error;
   }
 };
 
+
 export const handleLogin =
-  (credentails) => async (dispatch) => {
+  (credentials) => async (dispatch) => {
     dispatch(setAuthLoading(true));
-
     try {
-      const loginResponse = await getToken(credentails);
-      const userResponse = await getLoggedInUsersDetails();
+      const loginResponse = await getToken(credentials);
 
-      dispatch(login({ ...loginResponse }));
-      dispatch(
-        setUser({
-          ...userResponse,
-        }),
-      );
-      await AsyncStorage.setItem('auth', JSON.stringify(true));
-      dispatch(setAuthLoading(false));
-    } catch (error) {+
+      if (loginResponse.err === 0) {
+        const { apiToken, apiTokenExpiry } = loginResponse.data;
+
+        // Dispatch login and set user details
+        dispatch(
+          login({
+            accessToken: apiToken,
+          })
+        );
+
+        dispatch(
+          setUser({
+            apiTokenExpiry,
+          })
+        );
+
+        await AsyncStorage.setItem(
+          'auth',
+          JSON.stringify({
+            isAuthenticated: true,
+            accessToken: apiToken,
+          })
+        );
+
+        dispatch(setAuthLoading(false));
+      } else {
+        throw new Error(loginResponse.message || 'Login failed');
+      }
+    } catch (error) {
+      console.error('Login error:', error);
       dispatch(handleLogout());
       dispatch(setAuthLoading(false));
       throw error;
     }
   };
+
 
 export const handleLogout = () => (dispatch) => {
   dispatch(logout());
