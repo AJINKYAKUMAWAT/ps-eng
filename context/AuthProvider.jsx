@@ -25,7 +25,6 @@ export const AuthProvider = ({children}) => {
   const getUserDetails = async () => {
     const userDetails = JSON.parse(await AsyncStorage.getItem('user'));
     const userToken = await AsyncStorage.getItem('token');
-    console.log("userToken",userDetails)
     setAuth(userDetails);
     if (userToken) {
       setIsLoggedIn(true);

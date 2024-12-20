@@ -1,9 +1,7 @@
 import React from 'react';
-import {View, StyleSheet, Dimensions, Animated, Image} from 'react-native';
-// import SplashIcon from './Icons/SplashIcon';
+import {View, StyleSheet, Image} from 'react-native';
 import {StatusBar} from 'react-native';
 
-const {width, height} = Dimensions.get('window');
 import LaunchScreen from '../../assets/image/splash_screen.png'
 const SplashScreen = () => {
   return (
@@ -24,11 +22,11 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#213578', // Set a background color
+    backgroundColor:'#4894FE'
   },
   SplashScreen: {
-    width: width * 1.0, // 80% of the screen width
-    height: height * 1.25, // 40% of the screen height
+    width: '100%', // Full width
+    height: '100%', // Full height
   },
 });
 
