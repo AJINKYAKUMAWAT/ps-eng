@@ -53,7 +53,6 @@ const getToken = async (credentials) => {
         },
       }
     );
-    console.log("response",response)
     return response.data;
   } catch (error) {
     console.error('Error during login:', error);
@@ -84,13 +83,13 @@ export const handleLogin =
           })
         );
 
-        await AsyncStorage.setItem(
-          'auth',
-          JSON.stringify({
-            isAuthenticated: true,
-            accessToken: apiToken,
-          })
-        );
+        // await AsyncStorage.setItem(
+        //   'auth',
+        //   JSON.stringify({
+        //     isAuthenticated: true,
+        //     accessToken: apiToken,
+        //   })
+        // );
 
         dispatch(setAuthLoading(false));
       } else {

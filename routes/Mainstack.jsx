@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext, useEffect } from 'react';
 import {
   View,
   StyleSheet,
@@ -16,13 +16,30 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import AboutUs from '../components/AboutUs/AboutUs';
 import { ContactUs } from '../components/ContactUs/ContactUs';
 import MyTabs from '../components/BottomTabs/BottomTabs';
+import AuthContext from '../context/AuthProvider';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 const Drawer = createDrawerNavigator();
 
+
+function LogoutScreen() {
+  const { setIsLoggedIn,clearUserDetails } = useContext(AuthContext);
+
+  useEffect(() => {
+    const logout = () => {
+      clearUserDetails();      // Update state to logout
+    };
+
+    logout();
+  }, [ setIsLoggedIn]);
+
+  return <View />; // Render an empty view
+}
+
 function CustomDrawerContent(props) {
   return (
-    <DrawerContentScrollView {...props}>
+    <DrawerContentScrollView {...props} >
       <View style={styles.drawerHeader}>
         <TouchableOpacity onPress={() => props.navigation.toggleDrawer()}>
           <Avatar.Image size={40} source={{uri: 'https://picsum.photos/700'}} />
@@ -35,11 +52,14 @@ function CustomDrawerContent(props) {
 }
 
 export default function Mainstack() {
+  const {setIsLoggedIn} = useContext(AuthContext);
+  
   return (
     
         <Drawer.Navigator
           drawerContent={props => <CustomDrawerContent {...props} />}
           screenOptions={({navigation}) => ({
+            swipeEnabled:false,
             headerStyle: {
               backgroundColor: '#F3F3F2',
             },
@@ -47,12 +67,7 @@ export default function Mainstack() {
             headerRight: () => (
               <View style={styles.headerRight}>
                 <TouchableOpacity>
-                  <Image
-                    source={{
-                      uri: 'https://s3-alpha-sig.figma.com/img/e64d/4d58/b2560587e5fc7809c455300a88632ea6?Expires=1732492800&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=dSUCONtE7jXmP82eSiOI9j-iLa5y2UsUhZu9WlOHRrARcFEJSfUp~I3no1cUOzVzllNwwNgiJ-FOOBeHjGfVmVOxARr1mBFF09TMfvWIDx44mTlWvmozZ8iPSq-3WLJ6XbrkML1H8K9~lP0jcxeUsh1AmNlbgVUTb0aq6tdXhuJAzLQYyU~YP-ywl8630qTJOsa3l4GgRGZEY~m7dxqHYFxXac7elGc78ofP06iAQapbngsAykvNyRc7C6xcML~rpNL2ishEwC39mcuw30gRUZpOLtvAtcNmcL3TmvptI-15tjF1NcShm1YEgpUEYRtEbfPAIoFQxHBzyngv15TL0g__',
-                    }}
-                    style={styles.customIcon}
-                  />
+                <Icon name="bell-outline" size={24} color="#000"  style={styles.customIcon}/>
                 </TouchableOpacity>
               </View>
             ),
@@ -87,6 +102,15 @@ export default function Mainstack() {
             }}
             name="Contact Us"
             component={ContactUs}
+          />
+          <Drawer.Screen
+            options={{
+              drawerIcon: ({color, size}) => (
+                <Icon name="logout" color={color} size={size} />
+              ),
+            }}
+            name="Logout"
+            component={LogoutScreen}
           />
         </Drawer.Navigator>
      

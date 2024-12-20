@@ -1,164 +1,114 @@
-import {Image, StyleSheet, Text, View} from 'react-native';
-import React, {useState} from 'react';
-import Input from '../../AtomicComponents/Input';
-import {useNavigation} from '@react-navigation/native';
+import {Image, ScrollView, StyleSheet, Text, View} from 'react-native';
+import React, {useContext, useEffect, useState} from 'react';
 import Button from '../../AtomicComponents/Button';
 import {useToast} from 'react-native-toast-notifications';
 import {Loader} from '../../AtomicComponents/Loader.jsx';
 import {typography} from '../../theme/typography.jsx';
-import Header from '../../AtomicComponents/Header.jsx';
 import InputWithIcon from '../../AtomicComponents/InputWithIcon.jsx';
 import ps_logo from '../../assets/image/ps_engineering.png';
 import login_logo from '../../assets/image/login_logo.png';
 import CheckBox from '@react-native-community/checkbox';
-import { useDispatch } from 'react-redux';
-import { handleLogin } from '../../redux/auth/auth-slice.jsx';
-import { API_ENDPOINT, axiosPrivate } from '../../utils/constant.jsx';
+import {API_ENDPOINT, axiosPrivate} from '../../utils/constant.jsx';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import AuthContext from '../../context/AuthProvider.jsx';
+import { palette } from '../../theme/palette.jsx';
 
 const LoginScreeen = () => {
-  const [otpLoader, setOtpLoader] = useState(false);
+  const {auth, setIsLoggedIn,setAuth} = useContext(AuthContext);
+
+  const [loader, setLoader] = useState(false);
   const [isSelected, setSelection] = useState(false);
   const [loginObj, setLoginObj] = useState({
     username: '',
-    password: '',
+    password:'',
   });
-  const dispatch = useDispatch()
+  const [errorMessage, setErrorMessage] = useState('');
   const [passwordHide, setPasswordHide] = useState(true);
   const toast = useToast();
 
-  const navigation = useNavigation();
+  useEffect(() => {
+    console.log("auth",typeof auth)
+    if (auth) {
+      setLoginObj({
+        username: auth.username, // Populate from auth when available
+        password: auth.password,
+      });
+      setSelection(true)
+    }
+  }, [auth]);
 
-  const [phoneNumber, setPhoneNumber] = useState('');
-  const [validation, setValidation] = useState({
-    phoneNumberError: ' ',
-    passwordError: ' ',
-  });
-
-  const handleSubmit = async (e) => {
+  const handleSubmit = async e => {
     e.preventDefault();
-  
+
     const payload = {
       userName: loginObj.username,
       password: loginObj.password,
       xAction: 'generateToken',
     };
-  
-    axiosPrivate
-      .post(
-        API_ENDPOINT.LOGIN, 
-        {}, // Empty body since you're sending data in headers
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            source: 'mobile_application',
-            'x-username': payload.userName, // Example header key for username
-            'x-password': payload.password, // Example header key for password
-            'x-action': payload.xAction, // Example header key for action
+
+    if (!(loginObj.username || loginObj.password)) {
+      setErrorMessage('This field is required');
+    } else {
+      setLoader(true);
+      axiosPrivate
+        .post(
+          API_ENDPOINT.LOGIN,
+          {}, // Empty body since you're sending data in headers
+          {
+            headers: payload,
           },
-        }
-      )
-      .then(async (res) => {
-        if (res) {
-          const toastId = toast.show('Login Successfull', {
-            data: {
-              type: 'success',
-              message: 'Login Successfully',
-              placement: 'top',
-              duration: 4000,
-              animationType: 'slide-in',
-            },
-          });
-          if (toastId === toastId) {
-            toast.hideAll();
+        )
+        .then(async res => {
+          const userdetails = {            
+            username:loginObj.username,
+            password:loginObj.password
           }
-          setAuth(res?.data?.data?.token);
-          await AsyncStorage.setItem('user', JSON.stringify(res?.data?.data));
-          await AsyncStorage.setItem('token', JSON.stringify(res?.data?.data?.token));
-        } else if (!res) {
-          if (res?.data?.data?.msg === 'User is not registered.') {
-            const toastId = toast.show(
-              'Please use registered number or contact us on 020 - 67136236 / edukaansupport@tatamotors.com',
-              {
-                data: {
-                  type: 'danger',
-                  message:
-                    'Please use registered number or contact us on 020-67136236 / edukaansupport@tatamotors.com',
-                  placement: 'top',
-                  duration: 4000,
-                  animationType: 'slide-in',
-                },
-              }
-            );
-            if (toastId === toastId) {
-              toast.hideAll();
-            }
-          } else if (res?.data?.data?.msg === 'Username or password do not match.') {
-            const toastId = toast.show('Username or password do not match.', {
+          await AsyncStorage.setItem('user', JSON.stringify({...userdetails,userId:res?.data?.data?.userID,}));
+          await AsyncStorage.setItem('token', res?.data?.data?.apiToken);
+          if(isSelected){
+            setAuth(userdetails);
+          }else{
+            setAuth(null)
+          }
+          setIsLoggedIn(true);
+          setLoader(false);
+          if (res) {
+            toast.show('Login Successfull', {
               data: {
-                type: 'danger',
-                message: 'Username or password do not match.',
+                type: 'success',
+                message: 'Login Successfully',
                 placement: 'top',
                 duration: 4000,
                 animationType: 'slide-in',
               },
             });
-            if (toastId === toastId) {
-              toast.hideAll();
-            }
-          } else {
-            const toastId = toast.show(res?.data?.data?.msg, {
-              data: {
-                type: 'danger',
-                message: `${res?.data?.data?.msg}`,
-                placement: 'top',
-                duration: 4000,
-                animationType: 'slide-in',
-              },
-            });
-            if (toastId === toastId) {
-              toast.hideAll();
-            }
           }
-          console.error('Login failed:', res?.data?.data?.msg);
-        }
-        setSignInLoader(false);
-      })
-      .catch((err) => {
-        if (err.code === 'ERR_BAD_REQUEST') {
+        })
+        .catch(err => {
+          setLoader(false);
           toast.show(err, {
             data: {
               type: 'Failed',
-              message:
-                'Your account has temporarily blocked due to multiple attempts to login using an incorrect password. Either login with OTP and change the password or try login in again with correct password after some time.',
+              message: err.response?.data?.message || 'Invalid User',
               placement: 'top',
               duration: 4000,
               animationType: 'slide-in',
             },
           });
-        }
-        setSignInLoader(false);
-        console.error('Error during login:', err);
-        setTimeout(() => {
-          setValidation({
-            ...validation,
-            phoneNumberError: '',
-            passwordError: '',
-          });
-        }, 2000);
-      });
+        });
+    }
   };
-  
+
+  console.log("username",loginObj.username)
+
   return (
-    <View style={styles.wrapper}>
+    <ScrollView style={styles.wrapper}>
       <View style={styles.container}>
         <View style={styles.ps_logo}>
-
-        <Image source={ps_logo} />
+          <Image source={ps_logo} />
         </View>
         <View style={styles.ps_logo}>
-
-        <Image source={login_logo}/>
+          <Image source={login_logo} />
         </View>
         <View style={{marginTop: 16, width: '100%'}}>
           <Text style={styles.heading}>Log in</Text>
@@ -171,6 +121,7 @@ const LoginScreeen = () => {
             value={loginObj.username}
             keyboardType="default" // Use "default" for text input
             onChangeText={text => setLoginObj({...loginObj, username: text})}
+            errorMessage={errorMessage}
           />
           <InputWithIcon
             placeholder="Password"
@@ -182,6 +133,7 @@ const LoginScreeen = () => {
             passwordUnVisible="eye-off-outline"
             passwordHide={passwordHide}
             passwordIconClick={setPasswordHide}
+            errorMessage={errorMessage}
           />
           <View style={styles.checkboxContainer}>
             <CheckBox
@@ -195,11 +147,14 @@ const LoginScreeen = () => {
           <View style={styles.buttonContainer}>
             <Button
               asTouchable
-              title="Sign In via OTP"
+              title="Sign In"
+              disabled={loader}
               style={styles.signInOtpBtn}
               onPress={handleSubmit}>
-              {otpLoader ? (
-                <Loader size={'small'} />
+              {loader ? (
+                <View style={{display:'flex',flexDirection:'row',gap:2}}>
+                <Loader size={'small'} color={palette.white}/><Text style={styles.signInOtpText}>Sign in</Text>
+                </View>
               ) : (
                 <Text style={styles.signInOtpText}>Sign in</Text>
               )}
@@ -210,7 +165,7 @@ const LoginScreeen = () => {
           </View>
         </View>
       </View>
-    </View>
+    </ScrollView>
   );
 };
 
@@ -221,10 +176,15 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
   },
+  scrollContainer: {
+    flexGrow: 1,
+    justifyContent: 'center',
+    paddingHorizontal: 20,
+  },
   checkboxContainer: {
     flexDirection: 'row',
-    marginBottom:10,
-    alignItems:'center',
+    marginBottom: 10,
+    alignItems: 'center',
   },
   checkbox: {
     marginRight: 12, // Space between checkbox and text
@@ -232,7 +192,7 @@ const styles = StyleSheet.create({
     borderWidth: 1, // Optional: border for a custom look
     borderColor: '#213578', // Border color to match the theme
     borderRadius: 4, // Optional: rounded corners for the checkbox
-    transform: [{scaleX: 1.2}, {scaleY: 1.2}]
+    transform: [{scaleX: 1.2}, {scaleY: 1.2}],
   },
   container: {
     marginVertical: 16,
@@ -303,9 +263,7 @@ const styles = StyleSheet.create({
     fontFamily: typography.boldPoppins,
     textAlign: 'center',
   },
-  ps_logo:{
-    padding:15,
-   
+  ps_logo: {
+    padding: 15,
   },
-
 });

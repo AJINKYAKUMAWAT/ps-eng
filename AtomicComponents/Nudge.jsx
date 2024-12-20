@@ -5,7 +5,6 @@ import { typography } from '../theme/typography'
 import CheckCircleIcon from '../components/icons/CheckIconCircle'
 
 const Nudge = ({ toastOption }) => {
-    console.log("toastOption",toastOption)
     return (
         <View style={styles.nudgeWrapper}>
             <View style={styles.nudgeContainer}>

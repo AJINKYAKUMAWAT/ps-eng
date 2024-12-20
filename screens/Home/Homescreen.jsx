@@ -5,7 +5,7 @@ import {
   StyleSheet,
 } from 'react-native';
 import { useScrollToTop } from '@react-navigation/native';
-import Dashboard from '../Reanimated';
+import Dashboard from '../Dashboard';
 
 export function HomeScreen() {
     const ref = React.useRef(null);

@@ -19,7 +19,7 @@ const InputWithIcon = ({
 }) => {
   return (
     <View style={styles.wrapper}>
-      <View style={[styles.inputContainer, errorMessage ? styles.errorBorder : null]}>
+      <View style={[styles.inputContainer, errorMessage && !value ? styles.errorBorder : null]}>
         <Icon name={iconName} size={24} color="#747373" style={styles.icon} />
         <TextInput
           style={styles.input}
@@ -51,7 +51,7 @@ const InputWithIcon = ({
         )}
       </View>
       {/* Conditionally render error message */}
-      {errorMessage ? <Text style={styles.errorText}>{errorMessage}</Text> : null}
+      {errorMessage && !value ? <Text style={styles.errorText}>{errorMessage}</Text> : null}
     </View>
   );
 };
