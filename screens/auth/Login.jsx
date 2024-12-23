@@ -116,6 +116,7 @@ const LoginScreeen = () => {
             placeholder="Name"
             iconName="account-outline"
             value={loginObj.username}
+            placeholderTextColor='#A8A8A8'
             keyboardType="default" // Use "default" for text input
             onChangeText={text => setLoginObj({...loginObj, username: text})}
             errorMessage={errorMessage}
@@ -128,6 +129,7 @@ const LoginScreeen = () => {
             onChangeText={text => setLoginObj({...loginObj, password: text})}
             passwordVisible="eye-outline"
             passwordUnVisible="eye-off-outline"
+            placeholderTextColor='#A8A8A8'
             passwordHide={passwordHide}
             passwordIconClick={setPasswordHide}
             errorMessage={errorMessage}
