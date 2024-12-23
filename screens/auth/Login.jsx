@@ -27,7 +27,6 @@ const LoginScreeen = () => {
   const toast = useToast();
 
   useEffect(() => {
-    console.log("auth",typeof auth)
     if (auth) {
       setLoginObj({
         username: auth.username, // Populate from auth when available
@@ -99,25 +98,23 @@ const LoginScreeen = () => {
     }
   };
 
-  console.log("username",loginObj.username)
-
   return (
     <ScrollView style={styles.wrapper}>
       <View style={styles.container}>
-        <View style={styles.ps_logo}>
+        <View style={styles.ps_text}>
           <Image source={ps_logo} />
+        </View>
+         <View style={{marginTop: -10,marginBottom: 10, width: '100%'}}>
+          <Text style={styles.heading}>Log in</Text>
         </View>
         <View style={styles.ps_logo}>
           <Image source={login_logo} />
-        </View>
-        <View style={{marginTop: 16, width: '100%'}}>
-          <Text style={styles.heading}>Log in</Text>
-        </View>
+        </View>      
 
         <View style={styles.formConatiner}>
           <InputWithIcon
             placeholder="Name"
-            iconName="account"
+            iconName="account-outline"
             value={loginObj.username}
             keyboardType="default" // Use "default" for text input
             onChangeText={text => setLoginObj({...loginObj, username: text})}
@@ -125,7 +122,7 @@ const LoginScreeen = () => {
           />
           <InputWithIcon
             placeholder="Password"
-            iconName="lock"
+            iconName="lock-outline"
             value={loginObj.password}
             keyboardType={passwordHide ? 'password' : 'default'} // Use "default" for text input
             onChangeText={text => setLoginObj({...loginObj, password: text})}
@@ -147,21 +144,21 @@ const LoginScreeen = () => {
           <View style={styles.buttonContainer}>
             <Button
               asTouchable
-              title="Sign In"
+              title="Log In"
               disabled={loader}
               style={styles.signInOtpBtn}
               onPress={handleSubmit}>
               {loader ? (
                 <View style={{display:'flex',flexDirection:'row',gap:2}}>
-                <Loader size={'small'} color={palette.white}/><Text style={styles.signInOtpText}>Sign in</Text>
+                <Loader size={'small'} color={palette.white}/><Text style={styles.signInOtpText}>Log in</Text>
                 </View>
               ) : (
-                <Text style={styles.signInOtpText}>Sign in</Text>
+                <Text style={styles.signInOtpText}>Log in</Text>
               )}
             </Button>
           </View>
           <View style={{width: '100%'}}>
-            <Text style={styles.heading2}>Forgot Password?</Text>
+            <Text style={styles.heading3}>Forgot Password?</Text>
           </View>
         </View>
       </View>
@@ -183,11 +180,11 @@ const styles = StyleSheet.create({
   },
   checkboxContainer: {
     flexDirection: 'row',
-    marginBottom: 10,
+    marginBottom: 5,
     alignItems: 'center',
   },
   checkbox: {
-    marginRight: 12, // Space between checkbox and text
+    marginRight: 5, // Space between checkbox and text
     alignSelf: 'center', // Align it vertically
     borderWidth: 1, // Optional: border for a custom look
     borderColor: '#213578', // Border color to match the theme
@@ -235,6 +232,7 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     fontFamily: typography.bold,
     height: 48,
+    backgroundColor:'#4894FE'
   },
   signInOtpText: {
     fontSize: 16,
@@ -250,20 +248,32 @@ const styles = StyleSheet.create({
     fontFamily: typography.primary,
   },
   heading: {
-    fontSize: 24,
-    fontWeight: '700',
+    fontSize: 22,
+    fontWeight: '500',
     color: '#000',
-    fontFamily: typography.boldPoppins,
+    fontFamily: typography.primary,
     textAlign: 'center',
   },
   heading2: {
+    fontSize: 16,
+    fontWeight: '500',
+    color: '#BDBDBD',
+    fontFamily: typography.primary,
+    textAlign: 'center',
+    marginTop:4
+  },
+  heading3: {
     fontSize: 17,
+    fontWeight: '500',
     color: '#0F3656',
-    fontWeight: '700',
-    fontFamily: typography.boldPoppins,
+    fontFamily: typography.primary,
     textAlign: 'center',
   },
   ps_logo: {
     padding: 15,
+  },
+  ps_text: {
+    padding: 15,
+    marginLeft:28
   },
 });

@@ -1,4 +1,4 @@
 module.exports = {
-    assets: ['./assets/fonts/Poppins'], // Path to your fonts directory
+    assets: ['./assets/fonts/'], // Path to your fonts directory
   };
   

@@ -20,7 +20,7 @@ const InputWithIcon = ({
   return (
     <View style={styles.wrapper}>
       <View style={[styles.inputContainer, errorMessage && !value ? styles.errorBorder : null]}>
-        <Icon name={iconName} size={24} color="#747373" style={styles.icon} />
+        <Icon name={iconName} size={24} color="#A8A8A8" style={styles.icon} />
         <TextInput
           style={styles.input}
           value={value}
@@ -36,7 +36,7 @@ const InputWithIcon = ({
           <Icon 
             name={passwordUnVisible} 
             size={24} 
-            color="#747373" 
+            color="#A8A8A8" 
             style={styles.icon} 
             onPress={() => passwordIconClick(false)} 
           />
@@ -44,7 +44,7 @@ const InputWithIcon = ({
           <Icon 
             name={passwordVisible} 
             size={24} 
-            color="#747373" 
+            color="#A8A8A8" 
             style={styles.icon} 
             onPress={() => passwordIconClick(prev => !prev)} 
           />
@@ -64,10 +64,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: '#909090',
     borderRadius: 8,
     paddingHorizontal: 8,
-    backgroundColor: '#f9f9f9',
+    backgroundColor: '#fdfcfc',
     height: 55,
   },
   errorBorder: {
@@ -79,8 +79,8 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     fontSize: 16,
-    color: '#000',
-    backgroundColor: '#fff',
+    color: '#ADADAD',
+    backgroundColor: '#fdfcfc',
     paddingVertical: 4,
     paddingHorizontal: 8,
   },
