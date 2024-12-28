@@ -1,83 +1,244 @@
 /* eslint-disable prettier/prettier */
-import React from 'react';
-import {View, StyleSheet, Text, ScrollView} from 'react-native';
-import {AnimatedCircularProgress} from 'react-native-circular-progress';
+import React, {useState} from 'react';
+import {
+  View,
+  StyleSheet,
+  Text,
+  ScrollView,
+  TouchableOpacity,
+} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import Chart from '../components/Chart/Chart';
+import {typography} from '../theme/typography';
+import {Divider} from '@rneui/themed';
+import Carousel, {
+  ICarouselInstance,
+  Pagination,
+} from 'react-native-reanimated-carousel';
+import {
+  Extrapolation,
+  interpolate,
+  useSharedValue,
+} from 'react-native-reanimated';
 
+const PAGE_WIDTH = 430;
+
+const renderItem = ({item}) => {
+  return (
+    <View style={{display:'flex',flexDirection:'row',alignItems:'center',paddingLeft:20}}>
+      {item.map((_,index) => {
+        return (
+          <View key={index} style={styles.animatedContainer3}>
+            <View style={styles.animatedContainer2}>
+              <Text style={{color: '#000'}}>
+                <Icon name="file-plus-outline" color="#fff" size={30} />
+              </Text>
+            </View>
+            <Text
+              style={{
+                color: '#000',
+                textAlign: 'center',
+                padding: 2,
+                fontFamily: typography.primary,
+                fontWeight: 400,
+              }}>
+              Sole Invoice
+            </Text>
+          </View>
+        );
+      })}
+    </View>
+  );
+};
 
 export default function Dashboard() {
+  const [number, setNumber] = useState(0);
+  const progress = useSharedValue(0);
+  const baseOptions = {
+    vertical: false,
+    width: PAGE_WIDTH,
+    height: PAGE_WIDTH * 0.6,
+  };
+
+  const CustomPagination = ({data, onPressPagination}) => {
+    return (
+      <View
+        style={{flexDirection: 'row', justifyContent: 'center', marginTop: 10}}>
+        {data.map((_, index) => {
+          return (
+            <TouchableOpacity
+              key={index}
+              onPress={() => onPressPagination(index)}
+              style={{
+                width: number === index ? 20 : 10,
+                height: 7,
+                borderRadius: 5,
+                backgroundColor: number === index ? '#25A7F7' : '#ccc',
+                marginHorizontal: 5,
+                marginTop:-20
+              }}
+            />
+          );
+        })}
+      </View>
+    );
+  };
+
+  const ref = React.useRef(null);
+
+  const onPressPagination = index => {
+    setNumber(index);
+    ref.current?.scrollTo({
+      index, // Scroll to the specific index
+      animated: true,
+    });
+  };
+
+  const groupData = (data, chunkSize) => {
+    const groups = [];
+    for (let i = 0; i < data.length; i += chunkSize) {
+      groups.push(data.slice(i, i + chunkSize));
+    }
+    return groups;
+  };
+
+  const defaultDataWith6Colors = [
+    '#B0604D',
+    '#899F9C',
+    '#B3C680',
+    '#5C6265',
+    '#F5D399',
+    '#F1F1F1',
+    
+  ];
+
+  const groupedData = groupData(defaultDataWith6Colors, 4); // Group data into chunks of 4
+
   return (
     <View style={styles.container}>
-       <View style={styles.animatedContainer9}>
-        <Text style={{fontSize: 32, color: '#000',fontWeight:500}}>Welcome</Text>
-        <Text style={{fontSize: 30, color: '#4894FE'}}>PS <Text style={{fontStyle:'italic'}}>ENGG</Text></Text>        
+      <View style={styles.animatedContainer9}>
+        <Text
+          style={{
+            fontSize: 32,
+            color: '#000',
+            fontFamily: typography.boldPoppins,
+            marginTop: 10,
+          }}>
+          Welcome
+        </Text>
+        <Text
+          style={{
+            fontSize: 30,
+            color: '#4894FE',
+            fontFamily: typography.primary,
+            marginTop: -10,
+          }}>
+          PS <Text style={{fontFamily: typography.italic}}>ENGG</Text>
+        </Text>
       </View>
+      <View style={{width: '100%', paddingLeft: 20, paddingBottom: 10}}>
+        <Text
+          style={{
+            fontSize: 18,
+            color: '#333333',
+            fontFamily: typography.primary,
+          }}>
+          Quick Create
+        </Text>
+      </View>
+    
       <View style={styles.animatedContainer}>
-        <ScrollView horizontal contentContainerStyle={styles.scrollContent}>
-          {Array.from({length: 9}).map((_, index) => (
-            <View key={index} style={styles.animatedContainer3}>
-              <View key={index} style={styles.animatedContainer2}>
-                <Text style={{color: '#000'}}><Icon name="file-plus-outline" color="#fff" size={30}/></Text>
-              </View>
-              <Text style={{color: '#000',textAlign:'center',padding:2,fontWeight:500}}>Sole Invoice {index + 1}</Text>
-            </View>
-          ))}
-        </ScrollView>
+        <Carousel
+          ref={ref}
+          {...baseOptions}
+          loop
+          onProgressChange={(_, absoluteProgress) =>
+            (progress.value = absoluteProgress)
+          }
+          onSnapToItem={index => setNumber(index)}
+          width={PAGE_WIDTH} // Full width of the carousel container
+          style={{width: PAGE_WIDTH, justifyContent: 'center'}} // Center the carousel
+          pagingEnabled={true} // Disable snapping to a single item
+          data={groupedData}
+          renderItem={renderItem}
+          mode="parallax"
+          modeConfig={{
+            parallaxScrollingScale: 0.85,
+            parallaxScrollingOffset: 50,
+            parallaxAdjacentItemScale: 0.75,
+          }}
+        />
+        <CustomPagination
+          data={groupedData}
+          progress={progress}
+          onPressPagination={onPressPagination}
+        />
+      </View>
+
+      <View style={{width: '100%', paddingLeft: 20, paddingBottom: 10}}>
+        <Text
+          style={{
+            fontSize: 18,
+            color: '#333333',
+            fontFamily: typography.primary,
+          }}>
+          Annual Information
+        </Text>
       </View>
       <View style={styles.animatedContainer6}>
-        <View
-          style={{
-            display: 'flex',
-            flexDirection: 'row',
-            gap: 15,
-            // alignItems: 'center',
-            // justifyContent: 'center',
-          }}>
-          <AnimatedCircularProgress
-            size={60}
-            width={5}
-            rotation={0}
-            fill={60}
-            tintColor="#00e0ff"
-            backgroundColor="#ffffff">
-            {fill => <Text style={{color: '#000'}}>60%</Text>}
-          </AnimatedCircularProgress>
-
-          <View
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              gap: 3,
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}>
-            <Text style={{color: '#000', fontWeight: 700}}>Meter:M22303NG</Text>
-            <Text style={{color: '#000'}}>Reading:223.4 M3</Text>
-          </View>
-        </View>
-        <View
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 3,
-            padding: 10,
-          }}>
-          <Text style={{color: '#000', fontWeight: 700}}>
-            Your water usage is 11% more
-          </Text>
-          <Text style={{color: '#000'}}>then your previous month!</Text>
-        </View>
+        <Chart />
       </View>
+
       <View style={styles.animatedContainer8}>
-        <Text style={{fontSize: 20, color: 'grey'}}>Summary</Text>
-        <View style={{display: 'flex', flexDirection: 'row',marginTop:20}}>
+        <View style={{width: '100%', paddingLeft: 20, paddingBottom: 10}}>
+          <Text
+            style={{
+              fontSize: 18,
+              color: '#333333',
+              fontFamily: typography.primary,
+            }}>
+            Summary
+          </Text>
+        </View>
+        <View style={styles.summaryContainer}>
           <View style={styles.animatedContainer4}>
-            <Text style={{color: '#000',fontSize:20,fontWeight:700}}>12</Text>
-            <Text style={{color: '#000',fontSize:16}}>Units  <Icon name="arrow-up" color="#27AE60" size={15} />            </Text>
+            <Text
+              style={{
+                color: '#000',
+                fontSize: 30,
+                fontFamily: typography.boldPoppins,
+              }}>
+              12
+            </Text>
+            <Text
+              style={{
+                color: '#000',
+                fontSize: 20,
+                marginTop: -10,
+                fontFamily: typography.primary,
+              }}>
+              Units <Icon name="arrow-up" color="#27AE60" size={15} />{' '}
+            </Text>
           </View>
+          <Divider orientation="vertical" style={styles.verticalDivider} />
           <View style={styles.animatedContainer4}>
-            <Text style={{color: '#000',fontSize:20,fontWeight:700}}>2000</Text>
-            <Text style={{color: '#000',fontSize:16}}>KES  <Icon name="arrow-down" color="#E63956" size={15}/></Text>
+            <Text
+              style={{
+                color: '#000',
+                fontSize: 30,
+                fontFamily: typography.boldPoppins,
+              }}>
+              2000
+            </Text>
+            <Text
+              style={{
+                color: '#000',
+                fontSize: 20,
+                marginTop: -10,
+                fontFamily: typography.primary,
+              }}>
+              KES <Icon name="arrow-down" color="#E63956" size={15} />
+            </Text>
           </View>
         </View>
       </View>
@@ -92,37 +253,22 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   animatedContainer: {
-    width: '90%',
-    height: 170, // Fixed height for container
+    height: 160,
+    padding: 10,
     alignItems: 'center',
     justifyContent: 'center',
-    marginVertical: 20,    
+    marginBottom: 20,
     backgroundColor: '#fff',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
+    shadowOffset: {width: 0, height: 1},
     shadowOpacity: 0.8,
-    shadowRadius: 1,  
+    shadowRadius: 1,
     elevation: 8, // For Android shadow
+    width: PAGE_WIDTH, // Ensure it matches the PAGE_WIDTH
   },
   animatedContainer6: {
-    width: '90%',
-    height: 170, // Fixed height for container
-    padding: 25,
-    borderRadius: 10,
-    backgroundColor: '#78c5f5',
-    shadowColor: '#000', // Shadow for Android/iOS
-    shadowOffset: {width: 0, height: 4},
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
-    elevation: 8, // For Android shadow
-  },
-  animatedContainer9: {
-    width: '90%',
-    height: 170, // Fixed height for container
-    borderRadius: 10,
-    padding: 25,
-    marginVertical: 20,
-    backgroundColor: '#78c5f5',
+    height: 320, // Fixed height for container
+    backgroundColor: '#fff',
     shadowColor: '#000', // Shadow for Android/iOS
     shadowOffset: {width: 0, height: 4},
     shadowOpacity: 0.3,
@@ -132,14 +278,14 @@ const styles = StyleSheet.create({
   animatedContainer9: {
     width: '90%',
     height: 80, // Fixed height for container
-    marginVertical:15,
-    display:'flex',
-    justifyContent:'center'
+    marginVertical: 15,
+    display: 'flex',
+    justifyContent: 'center',
   },
   animatedContainer8: {
-    width: '90%',
+    width: '100%',
     height: 170, // Fixed height for container
-    marginVertical:15
+    marginVertical: 15,
   },
   scrollContent: {
     flexDirection: 'row',
@@ -148,26 +294,35 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   animatedContainer2: {
-    width: 64, // Adjust the width of each item
+    width: 74, // Adjust the width of each item
     height: 70,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor:'#25A7F7',
+    backgroundColor: '#25A7F7',
     borderRadius: 5,
   },
   animatedContainer4: {
-    width: '48%', // Adjust the width of each item
+    width: '50%',
     height: 100,
-    padding:25,
-    borderRadius: 5,
-    backgroundColor:'#A3C9FE',    
-    marginHorizontal: 5, // Add spacing between elements
+    padding: 25,
+    backgroundColor: '#ffffff',
+    alignItems: 'center',
+    justifyContent: 'center', // Center items
   },
   animatedContainer3: {
-    width: 64, // Adjust the width of each item
+    width: 80, // Adjust the width of each item
     height: 100,
     alignItems: 'center',
     justifyContent: 'center',
     marginHorizontal: 7, // Add spacing between elements
+  },
+  verticalDivider: {
+    height: '40%', // Reduce the height of the divider
+    backgroundColor: '#000',
+  },
+  summaryContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center', // Center the two summary sections
   },
 });

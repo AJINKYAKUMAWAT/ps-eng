@@ -15,7 +15,7 @@ function MyTabs() {
           if (route.name === 'Home') {
             iconName = 'home';
           } else if (route.name === 'Settings') {
-            iconName = 'cog';
+            iconName = 'clock-outline';
           } else if (route.name === 'PS Eng') {
             iconName = 'PS Eng';
           }
@@ -44,6 +44,7 @@ function MyTabs() {
       <Tab.Screen
         name="Home"
         options={{
+          title:()=>false,
           header: () => false,
         }}
         component={HomeScreen}
@@ -51,6 +52,7 @@ function MyTabs() {
       <Tab.Screen
         name="Settings"
         options={{
+          title:()=>false,
           header: () => false,
         }}
         component={HomeScreen}
@@ -58,6 +60,7 @@ function MyTabs() {
       <Tab.Screen
         name="PS Eng"
         options={{
+          title:()=>false,
           header: () => false,
         }}
         component={HomeScreen}
