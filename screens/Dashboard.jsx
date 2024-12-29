@@ -201,7 +201,7 @@ export default function Dashboard() {
             <Text
               style={{
                 color: '#000',
-                fontSize: 30,
+                fontSize: 26,
                 fontFamily: typography.boldPoppins,
               }}>
               12
@@ -209,7 +209,7 @@ export default function Dashboard() {
             <Text
               style={{
                 color: '#000',
-                fontSize: 20,
+                fontSize: 18,
                 marginTop: -10,
                 fontFamily: typography.primary,
               }}>
@@ -221,7 +221,7 @@ export default function Dashboard() {
             <Text
               style={{
                 color: '#000',
-                fontSize: 30,
+                fontSize: 26,
                 fontFamily: typography.boldPoppins,
               }}>
               2000
@@ -229,7 +229,7 @@ export default function Dashboard() {
             <Text
               style={{
                 color: '#000',
-                fontSize: 20,
+                fontSize: 18,
                 marginTop: -10,
                 fontFamily: typography.primary,
               }}>
