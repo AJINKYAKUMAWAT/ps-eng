@@ -1,84 +1,118 @@
 import React, { useState } from 'react';
-import { View, Text, SafeAreaView } from 'react-native';
-import DropDownPicker from 'react-native-dropdown-picker';
+import {
+  View,
+  Text,
+  Modal,
+  TouchableOpacity,
+  FlatList,
+  StyleSheet,
+  Platform,
+  TextInput,
+} from 'react-native';
 
-export default function App() {
-  const [open, setOpen] = useState(false);
-  const [value, setValue] = useState(null);
-  const [items, setItems] = useState([
-    { label: '2024', value: '2024' },
-    { label: '2023', value: '2023' },
-    { label: '2022', value: '2022' },
-    { label: '2021', value: '2021' },
-    { label: '2020', value: '2020' },
-    { label: '2019', value: '2019' },
-    { label: '2018', value: '2018' },
-  ]);
+export default function DropdownList({data}) {
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [selectedItem, setSelectedItem] = useState(null);
 
-  const renderDropdown = () => {
-    try {
-      return (
-        <DropDownPicker
-          open={open}
-          value={value}
-          items={items}
-          setOpen={setOpen}
-          setValue={setValue}
-          setItems={setItems}
-          autoScroll={false}
-          placeholder="Select..."
-          style={{
-            borderBottomWidth: 1,
-            borderBottomColor: '#000',
-            borderTopWidth: 0,
-            borderLeftWidth: 0,
-            borderRightWidth: 0,
-          }}
-          dropDownContainerStyle={{
-            maxHeight: 150, // Restrict dropdown height to enable scrolling
-            borderWidth: 0,
-            overflow: 'hidden',
-          }}
-          listItemContainerStyle={{
-            borderTopWidth: 1,
-            borderTopColor: '#ddd',
-            borderBottomWidth: 1,
-            borderBottomColor: '#ddd',
-          }}
-          itemStyle={{
-            justifyContent: 'flex-start',
-            height: 40, // Adjust this value for item height
-          }}
-        />
-      );
-    } catch (error) {
-      return <Text>Error loading dropdown</Text>;
-    }
+  // Toggle modal visibility
+  const toggleModal = () => {
+    setIsModalVisible(!isModalVisible);
   };
-  
+
+  // Handle item selection
+  const handleItemSelect = (item) => {
+    setSelectedItem(item);
+    setIsModalVisible(false); // Close modal after selecting an item
+  };
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <View
-        style={{
-          flex: 1,
-          alignItems: 'center',
-          justifyContent: 'center',
-          paddingHorizontal: 15,
-        }}
-      >
-        {renderDropdown()}
-      </View>
+    <View style={styles.container}>
+      {/* Custom Dropdown */}
+      <TouchableOpacity style={styles.inputContainer} onPress={toggleModal}>
+        <TextInput
+          style={styles.input}
+          placeholder="Select"
+          value={selectedItem ? selectedItem.label : data[0].label}
+          editable={false}
+        />
+      </TouchableOpacity>
 
-      <View
-        style={{
-          flex: 1,
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}
+      {/* Modal for Dropdown */}
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={isModalVisible}
+        onRequestClose={toggleModal}
       >
-        <Text>Chosen year: {value === null ? 'none' : value}</Text>
-      </View>
-    </SafeAreaView>
+        <TouchableOpacity
+          style={styles.modalOverlay}
+          activeOpacity={1}
+          onPressOut={toggleModal}
+        >
+          <View style={styles.modalContainer}>
+            <FlatList
+              data={data}
+              keyExtractor={(item) => item.value}
+              renderItem={({ item }) => (
+                <TouchableOpacity
+                  style={styles.item}
+                  onPress={() => handleItemSelect(item)}
+                >
+                  <Text style={styles.itemText}>{item.label}</Text>
+                </TouchableOpacity>
+              )}
+            />
+          </View>
+        </TouchableOpacity>
+      </Modal>
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#f7f7f7',
+  },
+  inputContainer: {
+    width: '60%',
+    backgroundColor: '#fff',
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#ccc',
+  },
+  input: {
+    fontSize: 16,
+    padding: 8,
+    color:'#000'
+  },
+  modalOverlay: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalContainer: {
+    width: '80%',
+    maxHeight: 250, // Adjust this height to control the size of the modal
+    backgroundColor: '#fff',
+    borderRadius: 8,
+    padding: 10,
+  },
+  item: {
+    paddingVertical: 10, // Adjust vertical padding to reduce item height
+    paddingHorizontal: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ddd',
+  },
+  itemText: {
+    fontSize: 16,
+    color:'#000'
+  },
+  selectedItemContainer: {
+    marginTop: 20,
+    alignItems: 'center',
+  },
+});

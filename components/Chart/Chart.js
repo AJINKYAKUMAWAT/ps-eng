@@ -10,8 +10,8 @@ import {LineChart} from 'react-native-chart-kit';
 import DropdownComponent from '../common/Dropdown';
 import {typography} from '../../theme/typography';
 import Carousel from 'react-native-reanimated-carousel';
+import { generateYAxisLabels, PAGE_WIDTH } from '../../utils/utils';
 
-const PAGE_WIDTH = Dimensions.get('window').width;
 
 const data = [
   {label: '2022', value: '2022'},
@@ -20,18 +20,14 @@ const data = [
   {label: '2019', value: '2019'},
 ];
 
+const labelData = [
+ 10,20,30,40
+];
+
 const ChartWithSwiper = () => {
   const ref = useRef(null);
 
-  const generateYAxisLabels = maxValue => {
-    const step = 10; // Interval for Y-axis labels
-    let labels = [];
-    for (let i = 0; i <= maxValue; i += step) {
-      labels.push(i);
-    }
-    return labels;
-  };
-
+  
   const dataSets = [
     {
       data: [10, 25, 18, 30, 40, 35],
@@ -50,8 +46,8 @@ const ChartWithSwiper = () => {
     const yAxisLabels = generateYAxisLabels(maxValue);
     return (
       <LineChart
+      style={{zIndex:1}}
         data={{
-          labels: item.labels, // Labels for the x-axis
           datasets: [
             {
               data: item.data, // Data for the y-axis
@@ -121,6 +117,7 @@ const ChartWithSwiper = () => {
           alignItems: 'center',
           width: '100%',
           zIndex: 1,
+         
         }}>
         <Text style={styles.title}>Monthly Sales</Text>
         <Text style={[styles.title2]}>
@@ -158,6 +155,7 @@ const styles = StyleSheet.create({
     color: '#000',
     paddingLeft: 20,
     fontFamily: typography.primary,
+      
   },
   paginationContainer: {
     flexDirection: 'row',

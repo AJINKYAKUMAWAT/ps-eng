@@ -38,13 +38,15 @@ function LogoutScreen() {
 }
 
 function CustomDrawerContent(props) {
+  const {auth } = useContext(AuthContext);
+
   return (
     <DrawerContentScrollView {...props} >
       <View style={styles.drawerHeader}>
         <TouchableOpacity onPress={() => props.navigation.toggleDrawer()}>
           <Avatar.Image size={40} source={{uri: 'https://picsum.photos/700'}} />
         </TouchableOpacity>
-        <Title style={styles.drawerHeaderText}>PS ENGG</Title>
+        <Title style={styles.drawerHeaderText}>{auth.username}</Title>
       </View>
       <DrawerItemList {...props} />
     </DrawerContentScrollView>

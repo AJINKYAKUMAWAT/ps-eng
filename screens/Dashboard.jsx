@@ -20,13 +20,17 @@ import {
   interpolate,
   useSharedValue,
 } from 'react-native-reanimated';
-
-const PAGE_WIDTH = 430;
+import {groupData, PAGE_WIDTH} from '../utils/utils';
 
 const renderItem = ({item}) => {
   return (
-    <View style={{display:'flex',flexDirection:'row',alignItems:'center',paddingLeft:20}}>
-      {item.map((_,index) => {
+    <View
+      style={{
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'center',
+      }}>
+      {item.map((_, index) => {
         return (
           <View key={index} style={styles.animatedContainer3}>
             <View style={styles.animatedContainer2}>
@@ -75,7 +79,7 @@ export default function Dashboard() {
                 borderRadius: 5,
                 backgroundColor: number === index ? '#25A7F7' : '#ccc',
                 marginHorizontal: 5,
-                marginTop:-20
+                marginTop: -20,
               }}
             />
           );
@@ -94,14 +98,6 @@ export default function Dashboard() {
     });
   };
 
-  const groupData = (data, chunkSize) => {
-    const groups = [];
-    for (let i = 0; i < data.length; i += chunkSize) {
-      groups.push(data.slice(i, i + chunkSize));
-    }
-    return groups;
-  };
-
   const defaultDataWith6Colors = [
     '#B0604D',
     '#899F9C',
@@ -109,7 +105,6 @@ export default function Dashboard() {
     '#5C6265',
     '#F5D399',
     '#F1F1F1',
-    
   ];
 
   const groupedData = groupData(defaultDataWith6Colors, 4); // Group data into chunks of 4
@@ -146,7 +141,7 @@ export default function Dashboard() {
           Quick Create
         </Text>
       </View>
-    
+
       <View style={styles.animatedContainer}>
         <Carousel
           ref={ref}
@@ -200,7 +195,8 @@ export default function Dashboard() {
             Summary
           </Text>
         </View>
-        <View style={styles.summaryContainer}>
+        <View style={{padding:15,backgroundColor:'#fff'}}>
+          <View style={styles.summaryContainer}>
           <View style={styles.animatedContainer4}>
             <Text
               style={{
@@ -220,7 +216,7 @@ export default function Dashboard() {
               Units <Icon name="arrow-up" color="#27AE60" size={15} />{' '}
             </Text>
           </View>
-          <Divider orientation="vertical" style={styles.verticalDivider} />
+            <Divider orientation="vertical" width={1} />
           <View style={styles.animatedContainer4}>
             <Text
               style={{
@@ -240,6 +236,8 @@ export default function Dashboard() {
               KES <Icon name="arrow-down" color="#E63956" size={15} />
             </Text>
           </View>
+          </View>
+        
         </View>
       </View>
     </View>
@@ -255,6 +253,7 @@ const styles = StyleSheet.create({
   animatedContainer: {
     height: 160,
     padding: 10,
+    paddingLeft:-10,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 20,
@@ -304,22 +303,18 @@ const styles = StyleSheet.create({
   animatedContainer4: {
     width: '50%',
     height: 100,
-    padding: 25,
     backgroundColor: '#ffffff',
     alignItems: 'center',
     justifyContent: 'center', // Center items
   },
   animatedContainer3: {
-    width: 80, // Adjust the width of each item
+    width: 78, // Adjust the width of each item
     height: 100,
     alignItems: 'center',
     justifyContent: 'center',
     marginHorizontal: 7, // Add spacing between elements
   },
-  verticalDivider: {
-    height: '40%', // Reduce the height of the divider
-    backgroundColor: '#000',
-  },
+
   summaryContainer: {
     flexDirection: 'row',
     alignItems: 'center',
