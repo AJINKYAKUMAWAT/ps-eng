@@ -86,7 +86,8 @@ const styles = StyleSheet.create({
   input: {
     fontSize: 16,
     padding: 8,
-    color:'#000'
+    paddingRight:0,
+    color:'#000',
   },
   modalOverlay: {
     flex: 1,

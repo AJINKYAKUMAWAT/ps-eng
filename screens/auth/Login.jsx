@@ -27,7 +27,7 @@ const LoginScreeen = () => {
   const toast = useToast();
 
   useEffect(() => {
-    if (auth.remember === 'true') {
+    if (auth && auth?.remember === 'true') {
       setLoginObj({
         username: auth.username, // Populate from auth when available
         password: auth.password,

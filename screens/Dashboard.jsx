@@ -34,7 +34,7 @@ const renderItem = ({item}) => {
         return (
           <View key={index} style={styles.animatedContainer3}>
             <View style={styles.animatedContainer2}>
-              <Text style={{color: '#000'}}>
+              <Text style={{color: '#000'}} onPress={()=>console.log(index)}>
                 <Icon name="file-plus-outline" color="#fff" size={30} />
               </Text>
             </View>
@@ -266,7 +266,7 @@ const styles = StyleSheet.create({
     width: PAGE_WIDTH, // Ensure it matches the PAGE_WIDTH
   },
   animatedContainer6: {
-    height: 320, // Fixed height for container
+    height: 300, // Fixed height for container
     backgroundColor: '#fff',
     shadowColor: '#000', // Shadow for Android/iOS
     shadowOffset: {width: 0, height: 4},
