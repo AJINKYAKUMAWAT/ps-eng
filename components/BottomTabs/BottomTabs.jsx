@@ -3,6 +3,7 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {Image, StyleSheet} from 'react-native';
 import { HomeScreen } from '../../screens/Home/Homescreen';
+import InvoiceList from '../../screens/Invoice/InvoiceList';
 
 const Tab = createBottomTabNavigator();
 
@@ -64,6 +65,14 @@ function MyTabs() {
           header: () => false,
         }}
         component={HomeScreen}
+      />
+      <Tab.Screen
+        name="Sales Invoice"
+        options={{
+          title:()=>false,
+          header: () => false,
+        }}
+        component={InvoiceList}
       />
     </Tab.Navigator>
   );

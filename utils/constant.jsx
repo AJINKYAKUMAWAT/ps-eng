@@ -16,4 +16,10 @@ export const axiosPrivate = axios.create({
     headers: { 'Content-Type': 'application/json', source: 'mobile_application' },
     withCredentials: true,
   });
+
+  export const InvoiceListData={
+    title: 'title',
+    calories: 'calories',
+    fat: 'fat',
+  }
   

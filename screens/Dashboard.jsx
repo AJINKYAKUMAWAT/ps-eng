@@ -21,8 +21,10 @@ import {
   useSharedValue,
 } from 'react-native-reanimated';
 import {groupData, PAGE_WIDTH} from '../utils/utils';
+import { useNavigation } from '@react-navigation/native';
 
 const renderItem = ({item}) => {
+  const navigation = useNavigation()
   return (
     <View
       style={{
@@ -34,7 +36,7 @@ const renderItem = ({item}) => {
         return (
           <View key={index} style={styles.animatedContainer3}>
             <View style={styles.animatedContainer2}>
-              <Text style={{color: '#000'}} onPress={()=>console.log(index)}>
+              <Text style={{color: '#000'}} onPress={()=>navigation.navigate('Sales Invoice')}>
                 <Icon name="file-plus-outline" color="#fff" size={30} />
               </Text>
             </View>
