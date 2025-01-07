@@ -10,6 +10,7 @@ import {
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {InvoiceListData} from '../../utils/constant';
 import {Searchbar} from 'react-native-paper';
+import CustomPagination from './CustomPagination';
 
 if (
   Platform.OS === 'android' &&
@@ -22,6 +23,11 @@ const TableList = ({data, colums}) => {
   const [searchQuery, setSearchQuery] = React.useState('');
   const [sortDirection, setSortDirection] = useState(null); // null | 'ascending' | 'descending'
   const [sortedColumn, setSortedColumn] = useState(null);
+  const [page, setPage] = React.useState(0);
+  const [numberOfItemsPerPageList] = React.useState([2, 3, 4]);
+  const [itemsPerPage, onItemsPerPageChange] = React.useState(
+    numberOfItemsPerPageList[0],
+  );
   const [expandedRows, setExpandedRows] = useState({}); // Track expanded rows
   const [items, setItems] = useState([
     {
@@ -47,6 +53,48 @@ const TableList = ({data, colums}) => {
     },
     {
       key: 4,
+      name: 'Gingerbread',
+      calories: 305,
+      fat: 3.7,
+      details: 'Classic gingerbread with a spicy touch.',
+    },
+    {
+      key: 5,
+      name: 'Frozen yogurt',
+      calories: 159,
+      fat: 6,
+      details: 'Low-fat frozen yogurt, perfect for summer.',
+    },
+    {
+      key: 6,
+      name: 'Gingerbread',
+      calories: 305,
+      fat: 3.7,
+      details: 'Classic gingerbread with a spicy touch.',
+    },
+    {
+      key: 7,
+      name: 'Frozen yogurt',
+      calories: 159,
+      fat: 6,
+      details: 'Low-fat frozen yogurt, perfect for summer.',
+    },
+    {
+      key: 8,
+      name: 'Gingerbread',
+      calories: 305,
+      fat: 3.7,
+      details: 'Classic gingerbread with a spicy touch.',
+    },
+    {
+      key: 9,
+      name: 'Frozen yogurt',
+      calories: 159,
+      fat: 6,
+      details: 'Low-fat frozen yogurt, perfect for summer.',
+    },
+    {
+      key: 10,
       name: 'Gingerbread',
       calories: 305,
       fat: 3.7,
@@ -83,6 +131,13 @@ const TableList = ({data, colums}) => {
       [key]: !prevState[key], // Toggle expanded state
     }));
   };
+
+  const from = page * itemsPerPage;
+  const to = Math.min((page + 1) * itemsPerPage, items.length);
+
+  React.useEffect(() => {
+    setPage(0);
+  }, [itemsPerPage]);
 
   return (
     <View>
@@ -222,6 +277,12 @@ const TableList = ({data, colums}) => {
             )}
           </View>
         ))}
+        <CustomPagination
+          totalItems={items.length}
+          itemsPerPage={itemsPerPage}
+          currentPage={page}
+          setPage={setPage}
+        />
       </DataTable>
     </View>
   );

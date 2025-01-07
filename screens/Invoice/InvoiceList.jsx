@@ -1,6 +1,8 @@
 import React, {useCallback} from 'react';
 import TableList from '../../components/common/TableList';
-import {Text} from 'react-native';
+import {Text, View, StyleSheet} from 'react-native';
+import {typography} from '../../theme/typography';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const data = [
   {
@@ -32,6 +34,7 @@ const data = [
     details: 'Classic gingerbread with a spicy touch.',
   },
 ];
+
 const InvoiceList = () => {
   const defaultColumns = useCallback(
     data => {
@@ -62,9 +65,67 @@ const InvoiceList = () => {
     [data],
   );
 
-  const columns = defaultColumns(data); // Call defaultColumns directly here
+  const columns = defaultColumns(data);
 
-  return <TableList data={data} colums={columns} />;
+  return (
+    <View>
+      <View style={styles.header}>
+        <Text style={styles.title}>Invoices</Text>
+        <View style={styles.newInvoiceContainer}>
+          <Text style={styles.newInvoiceText}>New Invoices</Text>
+          <Icon
+            name="plus-circle"
+            size={20}
+            color="#4894FE"
+            style={styles.icon}
+          />
+        </View>
+      </View>
+      <View style={styles.header2}>
+        <Text style={{color: '#4894FE',fontFamily:typography.boldPoppins}}>Home/Invoices</Text>
+      </View>
+      <TableList data={data} colums={columns} />
+    </View>
+  );
 };
+
+const styles = StyleSheet.create({
+  header: {
+    paddingLeft: 30,
+    paddingRight: 30,
+    paddingTop: 30,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  header2: {
+    paddingLeft: 30,
+    paddingRight: 30,
+    paddingBottom: 15,
+    paddingTop: 15,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  title: {
+    color: '#303841',
+    fontSize: 25,
+    fontFamily: typography.primary,
+  },
+  newInvoiceContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  newInvoiceText: {
+    color: '#4894FE',
+    fontSize: 15,
+    fontFamily: typography.boldPoppins,
+    marginRight: 5, // Add space between text and icon
+    textDecorationLine: 'underline', // Adds underline
+  },
+  icon: {
+    marginTop: 2, // Adjust the alignment to center the icon vertically
+  },
+});
 
 export default InvoiceList;
