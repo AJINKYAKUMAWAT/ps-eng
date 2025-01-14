@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import {
   View,
   Text,
@@ -12,7 +12,11 @@ import {
 
 export default function DropdownList({data}) {
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [selectedItem, setSelectedItem] = useState(null);
+  const [selectedItem, setSelectedItem] = useState([
+    {_id: '1', value: 'MALE'},
+    {_id: '2', value: 'FEMALE'},
+    {_id: '3', value: 'OTHERS'},
+  ]);
 
   // Toggle modal visibility
   const toggleModal = () => {
@@ -20,7 +24,7 @@ export default function DropdownList({data}) {
   };
 
   // Handle item selection
-  const handleItemSelect = (item) => {
+  const handleItemSelect = item => {
     setSelectedItem(item);
     setIsModalVisible(false); // Close modal after selecting an item
   };
@@ -42,22 +46,19 @@ export default function DropdownList({data}) {
         animationType="slide"
         transparent={true}
         visible={isModalVisible}
-        onRequestClose={toggleModal}
-      >
+        onRequestClose={toggleModal}>
         <TouchableOpacity
           style={styles.modalOverlay}
           activeOpacity={1}
-          onPressOut={toggleModal}
-        >
+          onPressOut={toggleModal}>
           <View style={styles.modalContainer}>
             <FlatList
               data={data}
-              keyExtractor={(item) => item.value}
-              renderItem={({ item }) => (
+              keyExtractor={item => item.value}
+              renderItem={({item}) => (
                 <TouchableOpacity
                   style={styles.item}
-                  onPress={() => handleItemSelect(item)}
-                >
+                  onPress={() => handleItemSelect(item)}>
                   <Text style={styles.itemText}>{item.label}</Text>
                 </TouchableOpacity>
               )}
@@ -86,8 +87,8 @@ const styles = StyleSheet.create({
   input: {
     fontSize: 16,
     padding: 8,
-    paddingRight:0,
-    color:'#000',
+    paddingRight: 0,
+    color: '#000',
   },
   modalOverlay: {
     flex: 1,
@@ -110,7 +111,7 @@ const styles = StyleSheet.create({
   },
   itemText: {
     fontSize: 16,
-    color:'#000'
+    color: '#000',
   },
   selectedItemContainer: {
     marginTop: 20,
