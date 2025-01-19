@@ -3,19 +3,9 @@ import {StyleSheet, Text, View, TouchableOpacity} from 'react-native';
 import {Dropdown} from 'react-native-element-dropdown';
 import {HelperText} from 'react-native-paper';
 
-const data = [
-  {label: 'Item 1', value: '1'},
-  {label: 'Item 2', value: '2'},
-  {label: 'Item 3', value: '3'},
-  {label: 'Item 4', value: '4'},
-  {label: 'Item 5', value: '5'},
-  {label: 'Item 6', value: '6'},
-  {label: 'Item 7', value: '7'},
-  {label: 'Item 8', value: '8'},
-];
 
-const DropdownComponent = () => {
-  const [value, setValue] = useState(null); // Selected value
+
+const DropdownComponent = ({required, data,title,ErrorMessages, value, setValue, error,placeholder}) => {
   const [isFocus, setIsFocus] = useState(false); // Dropdown focus state
 
   const renderItem = item => {
@@ -41,8 +31,8 @@ const DropdownComponent = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={{color: '#000', marginBottom: -5, marginLeft: 5}}>
-        Select Customer
+      <Text style={{color: '#000', marginLeft: 5}}>
+        {title} {required && <Text style={{color:'red'}}>*</Text>}
       </Text>
       <Dropdown
         style={[styles.dropdown, isFocus && {borderColor: 'blue'}]}
@@ -54,7 +44,7 @@ const DropdownComponent = () => {
         maxHeight={300}
         labelField="label"
         valueField="value"
-        placeholder={!isFocus ? 'Select item' : '...'}
+        placeholder={!isFocus ? placeholder : '...'}
         searchPlaceholder="Search..."
         value={value}
         onFocus={() => setIsFocus(true)} // Open dropdown on focus
@@ -65,9 +55,13 @@ const DropdownComponent = () => {
         }}
         renderItem={renderItem} // Custom render for dropdown items
       />
-      <HelperText type="error" visible={false}>
-        Email address is invalid!
+
+      {required && error && !value && 
+       <HelperText style={{marginTop:5,marginBottom:5,marginLeft:-13}} type="error" visible={error && !value}>
+        {ErrorMessages}
       </HelperText>
+      }
+     
     </View>
   );
 };
@@ -77,12 +71,13 @@ export default DropdownComponent;
 const styles = StyleSheet.create({
   container: {
     backgroundColor: 'transparent',
-    padding: 16,
+    padding: 10,
+    marginBottom:20
   },
   dropdown: {
     height: 40,
     borderBottomWidth: 1, // Add only a bottom border
-    borderBottomColor: 'gray', // Set the color for the bottom border
+    borderBottomColor: 'grey', // Set the color for the bottom border
     paddingHorizontal: 8,
   },
   label: {

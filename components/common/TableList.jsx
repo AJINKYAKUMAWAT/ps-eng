@@ -19,7 +19,7 @@ if (
   UIManager.setLayoutAnimationEnabledExperimental(true);
 }
 
-const TableList = ({data, colums}) => {
+const TableList = ({data, colums, enableSearch}) => {
   const [searchQuery, setSearchQuery] = React.useState('');
   const [sortDirection, setSortDirection] = useState(null); // null | 'ascending' | 'descending'
   const [sortedColumn, setSortedColumn] = useState(null);
@@ -141,15 +141,17 @@ const TableList = ({data, colums}) => {
 
   return (
     <View>
-      <View style={{padding: 10}}>
-        <Searchbar
-          style={{backgroundColor: '#fff'}}
-          placeholderTextColor="#C4C4C4"
-          placeholder="Search"
-          onChangeText={setSearchQuery}
-          value={searchQuery}
-        />
-      </View>
+      {enableSearch && (
+        <View style={{padding: 10}}>
+          <Searchbar
+            style={{backgroundColor: '#fff'}}
+            placeholderTextColor="#C4C4C4"
+            placeholder="Search"
+            onChangeText={setSearchQuery}
+            value={searchQuery}
+          />
+        </View>
+      )}
 
       <DataTable>
         <DataTable.Header>

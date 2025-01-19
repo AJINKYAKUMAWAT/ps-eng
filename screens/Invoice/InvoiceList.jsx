@@ -84,7 +84,7 @@ const InvoiceList = () => {
       <View style={styles.header2}>
         <Text style={{color: '#4894FE',fontFamily:typography.boldPoppins}}>Home/Invoices</Text>
       </View>
-      <TableList data={data} colums={columns} />
+      <TableList data={data} colums={columns} enableSearch={true} />
     </View>
   );
 };

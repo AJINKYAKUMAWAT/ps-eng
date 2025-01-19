@@ -2,31 +2,46 @@ import * as React from 'react';
 import {Text, View} from 'react-native';
 import {HelperText, TextInput} from 'react-native-paper';
 
-const TextField = () => {
-  const [text, setText] = React.useState('');
-
-  const onChangeText = text => setText(text);
+const TextField = ({
+  title,
+  ErrorMessages,
+  value,
+  setValue,
+  error,
+  placeholder,
+  required,
+}) => {
+  const onChangeText = value => setValue(value);
 
   const hasErrors = () => {
-    return !text.includes('@');
+    return !value.includes('@');
   };
 
   return (
     <View style={{padding: 8}}>
       <Text style={{color: '#000', marginBottom: -5, marginLeft: 5}}>
-        Select Customer
+        {title} {required && <Text style={{color: 'red'}}>*</Text>}
       </Text>
       <TextInput
-        style={{backgroundColor: 'transparent'}}
-        placeholder="Email"
+        style={{
+          backgroundColor: 'transparent',
+          fontSize: 15,
+          paddingHorizontal: 5, // Adjust horizontal padding
+          paddingVertical: 2, // Adjust vertical padding
+          height: 40,
+        }}
+        placeholder={placeholder}
         textColor="#000"
-        value={text}
+        value={value}
         onChangeText={onChangeText}
         activeUnderlineColor="#000"
       />
-      <HelperText type="error" visible={hasErrors()}>
-        Email address is invalid!
-      </HelperText>
+
+      {required && error && !value && (
+        <HelperText type="error" visible={error && !value}>
+          {ErrorMessages}
+        </HelperText>
+      )}
     </View>
   );
 };

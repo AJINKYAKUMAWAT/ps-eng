@@ -9,82 +9,27 @@ import MyDatePicker from '../../components/common/Datepicker';
 import DateAndTimePicker from '../../components/common/DateAndTimepicker';
 import Button from '../../AtomicComponents/Button';
 import ButtonWithIcon from '../../components/common/ButtonWithIcon';
-import {CUSTOMER_DATA, MATERIAL_TYPE} from '../../utils/constant';
+import {CUSTOMER_DATA, MATERIAL_TYPE, PRODUCT_DATA, TAX} from '../../utils/constant';
 
-const data = [
-  {
-    key: 1,
-    title: 'Cupcake',
-    calories: 356,
-    fat: 16,
-    details: 'Delicious cupcake with vanilla frosting.',
-  },
-  {
-    key: 2,
-    title: 'Eclair',
-    calories: 262,
-    fat: 16,
-    details: 'Chocolate-filled eclair with rich cream.',
-  },
-  {
-    key: 3,
-    title: 'Frozen yogurt',
-    calories: 159,
-    fat: 6,
-    details: 'Low-fat frozen yogurt, perfect for summer.',
-  },
-  {
-    key: 4,
-    title: 'Gingerbread',
-    calories: 305,
-    fat: 3.7,
-    details: 'Classic gingerbread with a spicy touch.',
-  },
-];
-
-const AddInvoice = () => {
+const AddLineItem = () => {
   const [itemObj, setItemObj] = useState({
-    customer: null,
-    invoiceDate: null,
-    date: null,
-    time: null,
-    materialType: null,
-    creditPeriod: '',
-    storeCode: '',
+    PRODUCT: null,
+    HSN: '',
+    DC: null,
+    ORDER: null,
+    UNIT: null,
+    QTY: '',
+    RATE: '',
+    AMT: '',
+    TAX: null,
+    CGST: '',
+    IGST: '',
+    SGST: '',
   });
   const [error, setError] = useState(false);
-  const defaultColumns = useCallback(data => {
-    return [
-      {
-        id: '1',
-        title: 'Desert',
-        data: data.map(i => <Text>{i.name}</Text>),
-        collapse: true,
-      },
-      {
-        id: '2',
-        title: 'Calories',
-        data: data.map(i => <Text>{i.calories}</Text>),
-      },
-      {
-        id: '3',
-        title: 'Fat',
-        data: data.map(i => <Text>{i.fat}</Text>),
-      },
-      {
-        id: '4',
-        title: 'Action',
-        data: data.map(i => <Text>{i.fat}</Text>),
-      },
-    ];
-  }, []);
-
-  const columns = useMemo(() => defaultColumns(data), []);
 
   const addItem = () => {
-    if (!itemObj.customer || !itemObj.materialType) {
-      setError(true);
-    }
+
   };
 
   return (
@@ -108,28 +53,24 @@ const AddInvoice = () => {
         </Text>
       </View>
       <View
-        style={{backgroundColor: '#fff', paddingBottom: 30, marginBottom: 10}}>
+        style={{backgroundColor: '#fff', paddingBottom: 10, marginBottom: 20}}>
         <View style={{zIndex: 1000}}>
           <DropdownComponent
-            value={itemObj.customer}
-            setValue={value => setItemObj(prev => ({...prev, customer: value}))}
-            required
-            error={error}
-            data={CUSTOMER_DATA}
-            title="Select Customer"
-            ErrorMessages="This field is required"
-            placeholder="Select Customer"
+            value={itemObj.PRODUCT}
+            setValue={value => setItemObj(prev => ({...prev, PRODUCT: value}))}
+            data={PRODUCT_DATA}
+            title="Select Product"
+            placeholder="Select Product"
           />
         </View>
         <View style={{marginTop: -30, zIndex: 1000}}>
-          <MyDatePicker
-            title="Sale Invoice Date"
-            date={itemObj.invoiceDate}
-            error={error}
-            setDate={value =>
-              setItemObj(prev => ({...prev, invoiceDate: value}))
+          <TextField
+            value={itemObj.HSN}
+            setValue={value =>
+              setItemObj(prev => ({...prev, HSN: value}))
             }
-            ErrorMessages="This field is required"
+            placeholder="Enter HSN/SAC"
+            title="HSN/SAC"
           />
         </View>
         <View
@@ -145,14 +86,13 @@ const AddInvoice = () => {
               flex: 1,
               paddingRight: 5,
             }}>
-            <DateAndTimePicker
-              error={error}
-              date={itemObj.date}
-              setDate={value => setItemObj(prev => ({...prev, date: value}))}
-              time={itemObj.time}
-              setTime={value => setItemObj(prev => ({...prev, time: value}))}
-              title="Date & Time of supply"
-              ErrorMessages="This field is required"
+            <TextField
+              value={itemObj.DC}
+              setValue={value =>
+                setItemObj(prev => ({...prev, DC: value}))
+              }
+              placeholder="Enter DC Number"
+              title="DC Number"
             />
           </View>
           {/* Dropdown */}
@@ -160,19 +100,55 @@ const AddInvoice = () => {
             style={{
               flex: 1,
               paddingLeft: 5,
-              height: 80,
+              height: 75,
+            }}>
+            <TextField
+              value={itemObj.ORDER}
+              setValue={value =>
+                setItemObj(prev => ({...prev, ORDER: value}))
+              }
+              placeholder="Enter Order Number"
+              title="Order Number"
+            />
+          </View>
+        </View>
+        <View
+          style={{
+            zIndex: 1000,
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+          }}>
+          {/* Date and Time Picker */}
+          <View
+            style={{
+              flex: 1,
+              paddingRight: 5,
+              height: 60,
             }}>
             <DropdownComponent
-              value={itemObj.materialType}
+              value={itemObj.UNIT}
               setValue={value =>
-                setItemObj(prev => ({...prev, materialType: value}))
+                setItemObj(prev => ({...prev, UNIT: value}))
               }
-              placeholder="Select Material"
-              error={error}
-              required
+              placeholder="Select Unit"
               data={MATERIAL_TYPE}
-              title="Material Type"
-              ErrorMessages="This field is required"
+              title="Unit"
+            />
+          </View>
+          <View
+            style={{
+              flex: 1,
+              paddingLeft: 5,
+              height: 55,
+            }}>
+            <TextField
+              value={itemObj.QTY}
+              setValue={value =>
+                setItemObj(prev => ({...prev, QTY: value}))
+              }
+              title="Qty"
+              placeholder="Enter Qty"
             />
           </View>
         </View>
@@ -192,14 +168,12 @@ const AddInvoice = () => {
               height: 80,
             }}>
             <TextField
-              value={itemObj.creditPeriod}
+              value={itemObj.RATE}
               setValue={value =>
-                setItemObj(prev => ({...prev, creditPeriod: value}))
+                setItemObj(prev => ({...prev, RATE: value}))
               }
-              placeholder="Enter Credit Period"
-              error={error}
-              title="Credit Period (In Days)"
-              ErrorMessages="This field is required"
+              title="Rate"
+              placeholder="Enter Rate"
             />
           </View>
           {/* Dropdown */}
@@ -210,29 +184,101 @@ const AddInvoice = () => {
               height: 80,
             }}>
             <TextField
-              error={error}
-              value={itemObj.storeCode}
+              value={itemObj.AMT}
               setValue={value =>
-                setItemObj(prev => ({...prev, storeCode: value}))
+                setItemObj(prev => ({...prev, AMT: value}))
               }
-              title="Store Code"
-              placeholder="Enter Store Code"
-              ErrorMessages="This field is required"
+              title="Amt"
+              placeholder="Enter Amt"
             />
           </View>
         </View>
       </View>
 
-      <View style={{padding: 10, backgroundColor: '#fff', marginBottom: 10}}>
-        <ButtonWithIcon
-          title="Add Line Item"
-          icon="plus"
-          color="#4894FE"
-          onPress={addItem}
-        />
-      </View>
-      <View style={{backgroundColor: '#fff'}}>
-        <TableList data={data} colums={columns} />
+      <View
+        style={{backgroundColor: '#fff', paddingBottom: 10, marginBottom: 10}}>
+      <View
+          style={{
+            zIndex: 1000,
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            marginBottom:10
+          }}>
+          {/* Date and Time Picker */}
+          <View
+            style={{
+              flex: 1,
+              paddingRight: 5,
+              height: 60,
+            }}>
+            <DropdownComponent
+              value={itemObj.TAX}
+              setValue={value =>
+                setItemObj(prev => ({...prev, TAX: value}))
+              }
+              placeholder="Tax"
+              data={TAX}
+              title="Tax"
+            />
+          </View>
+          {/* Dropdown */}
+          <View
+            style={{
+              flex: 1,
+              paddingLeft: 5,
+              height: 55,
+            }}>
+            <TextField
+              value={itemObj.CGST}
+              setValue={value =>
+                setItemObj(prev => ({...prev, CGST: value}))
+              }
+              title="CGST"
+              placeholder="CGST"
+            />
+          </View>
+        </View>
+        <View
+          style={{
+            zIndex: 1000,
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+          }}>
+          {/* Date and Time Picker */}
+          <View
+            style={{
+              flex: 1,
+              paddingRight: 5,
+            }}>
+            <TextField
+              value={itemObj.IGST}
+              setValue={value =>
+                setItemObj(prev => ({...prev, IGST: value}))
+              }
+              placeholder="IGST"
+              title="IGST"
+            />
+          </View>
+          <View
+            style={{
+              flex: 1,
+              paddingLeft: 5,
+              height: 75,
+            }}>
+            <TextField
+              value={itemObj.SGST}
+              setValue={value =>
+                setItemObj(prev => ({...prev, SGST: value}))
+              }
+              placeholder="SGST"
+              title="SGST"
+            />
+          </View>
+        </View>
+       
+       
       </View>
 
       <View
@@ -317,4 +363,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AddInvoice;
+export default AddLineItem;

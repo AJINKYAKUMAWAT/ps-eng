@@ -23,3 +23,32 @@ export const axiosPrivate = axios.create({
     fat: 'fat',
   }
   
+
+
+  export const CUSTOMER_DATA = [
+    {label: 'Item 1', value: '1'},
+    {label: 'Item 2', value: '2'},
+    {label: 'Item 3', value: '3'},
+    {label: 'Item 4', value: '4'},
+    {label: 'Item 5', value: '5'},
+    {label: 'Item 6', value: '6'},
+    {label: 'Item 7', value: '7'},
+    {label: 'Item 8', value: '8'},
+  ];
+
+  export const MATERIAL_TYPE = [
+    {label: 'Without Material', value: '1'},
+    {label: 'With Material', value: '2'},
+  ];
+
+  export const TAX = [
+    {label: '18%', value: '1'},
+    {label: '20%', value: '2'},
+  ];
+
+  export const PRODUCT_DATA = [
+    {label: 'IT 3684A - SPECIALBEARING OUTER', value: '1'},
+    {label: 'IT 3684B - SPECIALBEARING INNER', value: '2'},
+    {label: 'IT 300A - SPECIALBEARING', value: '3'},
+    {label: 'IT 3688A - SPECIALBEARING-NEW OUTER', value: '4'},
+  ];
