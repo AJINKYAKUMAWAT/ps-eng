@@ -10,8 +10,12 @@ import DateAndTimePicker from '../../components/common/DateAndTimepicker';
 import Button from '../../AtomicComponents/Button';
 import ButtonWithIcon from '../../components/common/ButtonWithIcon';
 import {CUSTOMER_DATA, MATERIAL_TYPE, PRODUCT_DATA, TAX} from '../../utils/constant';
+import { useNavigation } from '@react-navigation/native';
+import { asyncStorage } from 'reactotron-react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const AddLineItem = () => {
+  const navigation = useNavigation()
   const [itemObj, setItemObj] = useState({
     PRODUCT: null,
     HSN: '',
@@ -28,8 +32,10 @@ const AddLineItem = () => {
   });
   const [error, setError] = useState(false);
 
-  const addItem = () => {
-
+  
+  const addItem = async() => {
+    const getPath = await AsyncStorage.getItem('path')
+navigation.navigate(getPath)
   };
 
   return (

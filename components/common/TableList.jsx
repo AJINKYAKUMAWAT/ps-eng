@@ -19,7 +19,7 @@ if (
   UIManager.setLayoutAnimationEnabledExperimental(true);
 }
 
-const TableList = ({data, colums, enableSearch}) => {
+const TableList = ({data, colums, enableSearch,onPress,onDelete}) => {
   const [searchQuery, setSearchQuery] = React.useState('');
   const [sortDirection, setSortDirection] = useState(null); // null | 'ascending' | 'descending'
   const [sortedColumn, setSortedColumn] = useState(null);
@@ -201,12 +201,14 @@ const TableList = ({data, colums, enableSearch}) => {
                       alignItems: 'center',
                     }}>
                     <Icon
+                    onPress={onPress}
                       name="square-edit-outline"
                       color="#4894FE"
                       size={20}
                       style={{marginHorizontal: 2}}
                     />
                     <Icon
+                    onPress={onDelete}
                       name="trash-can-outline"
                       color="#f94944"
                       size={20}

@@ -46,6 +46,16 @@ export const axiosPrivate = axios.create({
     {label: '20%', value: '2'},
   ];
 
+  export const CONFIRMATION_MESSAGES = {
+    INVOICE_DELETE: 'Are you sure want to delete invoice ?',
+    LINE_ITEM_DELETE: 'Are you sure want to delete line item ?'
+  }
+
+  export const DELETED_MESSAGES = {
+    INVOICE_DELETE: 'Invoice deleted successfully',
+    LINE_ITEM_DELETE: 'Line item deleted successfully'
+  }
+
   export const PRODUCT_DATA = [
     {label: 'IT 3684A - SPECIALBEARING OUTER', value: '1'},
     {label: 'IT 3684B - SPECIALBEARING INNER', value: '2'},

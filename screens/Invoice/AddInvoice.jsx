@@ -9,7 +9,12 @@ import MyDatePicker from '../../components/common/Datepicker';
 import DateAndTimePicker from '../../components/common/DateAndTimepicker';
 import Button from '../../AtomicComponents/Button';
 import ButtonWithIcon from '../../components/common/ButtonWithIcon';
-import {CUSTOMER_DATA, MATERIAL_TYPE} from '../../utils/constant';
+import {CONFIRMATION_MESSAGES, CUSTOMER_DATA, MATERIAL_TYPE} from '../../utils/constant';
+import { useNavigation } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useRoute } from '@react-navigation/native';
+import ControlModal from '../../components/common/Modal';
+import {useToast} from 'react-native-toast-notifications';
 
 const data = [
   {
@@ -43,6 +48,11 @@ const data = [
 ];
 
 const AddInvoice = () => {
+  const toast = useToast()
+    const [showModal,setShowModal] = useState(false)
+  
+    const navigation = useNavigation()
+    const route = useRoute();
   const [itemObj, setItemObj] = useState({
     customer: null,
     invoiceDate: null,
@@ -81,11 +91,40 @@ const AddInvoice = () => {
 
   const columns = useMemo(() => defaultColumns(data), []);
 
-  const addItem = () => {
-    if (!itemObj.customer || !itemObj.materialType) {
-      setError(true);
-    }
+  const addItem = async() => {
+    // if (!itemObj.customer || !itemObj.materialType) {
+    //   setError(true);
+    // }
+    await AsyncStorage.setItem('path', route.name);
+    navigation.navigate('Add Line Item')
   };
+
+  const onSubmit = () => {
+    navigation.navigate('Sales Invoice')
+  }
+
+  const onPress =async () => {
+    await AsyncStorage.setItem('path', route.name);
+    navigation.navigate('Edit Line Item')
+  }
+
+  const onCancel = () => {
+    setShowModal(false)
+  }
+
+  const onDelete = () => {
+    setShowModal(false)
+    toast.show('Delete Successfully', {
+      data: {
+        type: 'success',
+        message: 'Delete Successfully',
+        placement: 'top',
+        duration: 4000,
+        animationType: 'slide-in',
+      },
+    });
+  }
+
 
   return (
     <ScrollView style={{backgroundColor: '#F7F7F7'}}>
@@ -232,7 +271,7 @@ const AddInvoice = () => {
         />
       </View>
       <View style={{backgroundColor: '#fff'}}>
-        <TableList data={data} colums={columns} />
+        <TableList data={data} colums={columns} onPress={onPress} onDelete={()=>setShowModal(true)}/>
       </View>
 
       <View
@@ -250,7 +289,7 @@ const AddInvoice = () => {
             flex: 1,
             paddingRight: 5,
           }}>
-          <ButtonWithIcon title="Cancel" color="#4894FE" onPress={addItem} />
+          <ButtonWithIcon title="Cancel" color="#4894FE" onPress={onSubmit} />
         </View>
         {/* Dropdown */}
         <View
@@ -262,10 +301,11 @@ const AddInvoice = () => {
             title="Save"
             background="#4894FE"
             color="#fff"
-            onPress={addItem}
+            onPress={onSubmit}
           />
         </View>
       </View>
+      <ControlModal onCancel={onCancel} showModal={showModal} onPress={onDelete} CONFIRMATION_MESSAGES={CONFIRMATION_MESSAGES.LINE_ITEM_DELETE}/>
     </ScrollView>
   );
 };

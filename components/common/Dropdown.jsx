@@ -12,11 +12,8 @@ import {
 
 export default function DropdownList({data}) {
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [selectedItem, setSelectedItem] = useState([
-    {_id: '1', value: 'MALE'},
-    {_id: '2', value: 'FEMALE'},
-    {_id: '3', value: 'OTHERS'},
-  ]);
+  const [selectedItem, setSelectedItem] = useState(null); // Initialize with the first item or null
+
 
   // Toggle modal visibility
   const toggleModal = () => {
@@ -36,7 +33,7 @@ export default function DropdownList({data}) {
         <TextInput
           style={styles.input}
           placeholder="Select"
-          value={selectedItem ? selectedItem.label : data[0].label}
+          value={selectedItem?.label || data[0].label}
           editable={false}
         />
       </TouchableOpacity>

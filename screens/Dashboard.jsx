@@ -4,7 +4,6 @@ import {
   View,
   StyleSheet,
   Text,
-  ScrollView,
   TouchableOpacity,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -12,12 +11,9 @@ import Chart from '../components/Chart/Chart';
 import {typography} from '../theme/typography';
 import {Divider} from '@rneui/themed';
 import Carousel, {
-  ICarouselInstance,
-  Pagination,
 } from 'react-native-reanimated-carousel';
 import {
-  Extrapolation,
-  interpolate,
+
   useSharedValue,
 } from 'react-native-reanimated';
 import {groupData, PAGE_WIDTH} from '../utils/utils';
@@ -36,7 +32,9 @@ const renderItem = ({item}) => {
         return (
           <View key={index} style={styles.animatedContainer3}>
             <View style={styles.animatedContainer2}>
-              <Text style={{color: '#000'}} onPress={()=>navigation.navigate('Sales Invoice')}>
+              <Text style={{color: '#000'}} onPress={()=>{
+                navigation.navigate('Sales Invoice')
+              }}>
                 <Icon name="file-plus-outline" color="#fff" size={30} />
               </Text>
             </View>

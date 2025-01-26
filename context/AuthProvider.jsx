@@ -1,7 +1,6 @@
 import React, {createContext, useState, useEffect} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { CustomStatusBar } from '../components/CustomStatusBar';
-import { Image } from 'react-native';
+import {CustomStatusBar} from '../components/CustomStatusBar';
 import SplashScreen from '../components/common/SplashScreen';
 
 const AuthContext = createContext({});
@@ -45,7 +44,6 @@ export const AuthProvider = ({children}) => {
       const tokenKey = 'token';
       const token = await AsyncStorage.getItem(tokenKey);
       console.log('Previous Token Data found in storage:', token);
-   
     } catch (error) {
       console.error('Error fetching token:', error);
     }
@@ -71,9 +69,9 @@ export const AuthProvider = ({children}) => {
         setAccountDetail,
         clearUserDetails
       }}>
-         {loading ? (
+      {loading ? (
         <CustomStatusBar>
-      <SplashScreen/>
+          <SplashScreen />
         </CustomStatusBar>
       ) : (
         children
@@ -83,4 +81,3 @@ export const AuthProvider = ({children}) => {
 };
 
 export default AuthContext;
- 

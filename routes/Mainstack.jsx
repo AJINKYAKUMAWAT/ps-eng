@@ -1,11 +1,5 @@
-import React, { useContext, useEffect } from 'react';
-import {
-  View,
-  StyleSheet,
-  TouchableOpacity,
-  Text,
-  Image,
-} from 'react-native';
+import React, {useContext, useEffect} from 'react';
+import {View, StyleSheet, TouchableOpacity, Text, Image} from 'react-native';
 import {
   createDrawerNavigator,
   DrawerContentScrollView,
@@ -14,34 +8,31 @@ import {
 import {Provider as PaperProvider, Avatar, Title} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import AboutUs from '../components/AboutUs/AboutUs';
-import { ContactUs } from '../components/ContactUs/ContactUs';
+import {ContactUs} from '../components/ContactUs/ContactUs';
 import MyTabs from '../components/BottomTabs/BottomTabs';
 import AuthContext from '../context/AuthProvider';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-
 
 const Drawer = createDrawerNavigator();
 
-
 function LogoutScreen() {
-  const { setIsLoggedIn,clearUserDetails } = useContext(AuthContext);
+  const {setIsLoggedIn, clearUserDetails} = useContext(AuthContext);
 
   useEffect(() => {
     const logout = () => {
-      clearUserDetails();      // Update state to logout
+      clearUserDetails(); // Update state to logout
     };
 
     logout();
-  }, [ setIsLoggedIn]);
+  }, [setIsLoggedIn]);
 
   return <View />; // Render an empty view
 }
 
 function CustomDrawerContent(props) {
-  const {auth } = useContext(AuthContext);
+  const {auth} = useContext(AuthContext);
 
   return (
-    <DrawerContentScrollView {...props} >
+    <DrawerContentScrollView {...props}>
       <View style={styles.drawerHeader}>
         <TouchableOpacity onPress={() => props.navigation.toggleDrawer()}>
           <Avatar.Image size={40} source={{uri: 'https://picsum.photos/700'}} />
@@ -54,68 +45,71 @@ function CustomDrawerContent(props) {
 }
 
 export default function Mainstack() {
-  const {setIsLoggedIn} = useContext(AuthContext);
-  
   return (
-    
-        <Drawer.Navigator
-          drawerContent={props => <CustomDrawerContent {...props} />}
-          screenOptions={({navigation}) => ({
-            swipeEnabled:false,
-            headerStyle: {
-              backgroundColor: '#F3F3F2',
-            },
-            headerTitle: () => <Text style={styles.headerTitle}>Hello</Text>,
-            headerRight: () => (
-              <View style={styles.headerRight}>
-                <TouchableOpacity>
-                <Icon name="bell-outline" size={24} color="#000"  style={styles.customIcon}/>
-                </TouchableOpacity>
-              </View>
-            ),
-          })}>
-          <Drawer.Screen
-            name="Dashboard"
-            component={MyTabs}
-            options={{
-              headerTitleAlign:'center',
-              headerTitle: () => <Text style={{color:'#000',fontSize:20}}>Dashboard</Text>,
-              drawerIcon: ({color, size}) => (
-                <Icon name="home" color={color} size={size} />
-              ),
-            }}
-          />
-          <Drawer.Screen
-            options={{
-              headerTitle: () => <Text>Helo</Text>,
-              drawerIcon: ({color, size}) => (
-                <Icon name="book-open-outline" color={color} size={size} />
-              ),
-            }}
-            name="About us"
-            component={AboutUs}
-          />
-          <Drawer.Screen
-            options={{
-              headerTitle: () => <Text>Helo</Text>,
-              drawerIcon: ({color, size}) => (
-                <Icon name="phone" color={color} size={size} />
-              ),
-            }}
-            name="Contact Us"
-            component={ContactUs}
-          />
-          <Drawer.Screen
-            options={{
-              drawerIcon: ({color, size}) => (
-                <Icon name="logout" color={color} size={size} />
-              ),
-            }}
-            name="Logout"
-            component={LogoutScreen}
-          />
-        </Drawer.Navigator>
-     
+    <Drawer.Navigator
+      drawerContent={props => <CustomDrawerContent {...props} />}
+      screenOptions={({navigation}) => ({
+        swipeEnabled: false,
+        headerStyle: {
+          backgroundColor: '#F3F3F2',
+        },
+        headerTitle: () => <Text style={styles.headerTitle}>Hello</Text>,
+        headerRight: () => (
+          <View style={styles.headerRight}>
+            <TouchableOpacity>
+              <Icon
+                name="bell-outline"
+                size={24}
+                color="#000"
+                style={styles.customIcon}
+              />
+            </TouchableOpacity>
+          </View>
+        ),
+      })}>
+      <Drawer.Screen
+        name="Dashboard"
+        component={MyTabs}
+        options={{
+          headerTitleAlign: 'center',
+          headerTitle: ({children}) => (
+            <Text style={{color: '#000', fontSize: 20}}>{children}</Text>
+          ),
+          drawerIcon: ({color, size}) => (
+            <Icon name="home" color={color} size={size} />
+          ),
+        }}
+      />
+      <Drawer.Screen
+        options={{
+          headerTitle: () => <Text>Helo</Text>,
+          drawerIcon: ({color, size}) => (
+            <Icon name="book-open-outline" color={color} size={size} />
+          ),
+        }}
+        name="About us"
+        component={AboutUs}
+      />
+      <Drawer.Screen
+        options={{
+          headerTitle: () => <Text>Helo</Text>,
+          drawerIcon: ({color, size}) => (
+            <Icon name="phone" color={color} size={size} />
+          ),
+        }}
+        name="Contact Us"
+        component={ContactUs}
+      />
+      <Drawer.Screen
+        options={{
+          drawerIcon: ({color, size}) => (
+            <Icon name="logout" color={color} size={size} />
+          ),
+        }}
+        name="Logout"
+        component={LogoutScreen}
+      />
+    </Drawer.Navigator>
   );
 }
 
