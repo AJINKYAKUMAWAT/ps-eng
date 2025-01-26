@@ -76,22 +76,6 @@ function MyTabs() {
         }}
         component={AddLineItem}
       />
-       <Tab.Screen
-        name="InvoiceList"
-        options={{
-          title:()=>false,
-          header: () => true,
-        }}
-        component={InvoiceList}
-      />
-       {/* <Tab.Screen
-        name="InvoiceList"
-        options={{
-          title:()=>false,
-          header: () => true,
-        }}
-        component={InvoiceList}
-      /> */}
     </Tab.Navigator>
   );
 }

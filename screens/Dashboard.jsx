@@ -36,7 +36,7 @@ const renderItem = ({item}) => {
         return (
           <View key={index} style={styles.animatedContainer3}>
             <View style={styles.animatedContainer2}>
-              <Text style={{color: '#000'}} onPress={()=>navigation.navigate('InvoiceList')}>
+              <Text style={{color: '#000'}} onPress={()=>navigation.navigate('Sales Invoice')}>
                 <Icon name="file-plus-outline" color="#fff" size={30} />
               </Text>
             </View>

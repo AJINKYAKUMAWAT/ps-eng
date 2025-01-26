@@ -3,7 +3,6 @@ import TableList from '../../components/common/TableList';
 import {Text, View, StyleSheet} from 'react-native';
 import {typography} from '../../theme/typography';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import { useNavigation } from '@react-navigation/native';
 
 const data = [
   {
@@ -37,7 +36,6 @@ const data = [
 ];
 
 const InvoiceList = () => {
-    const navigation = useNavigation()
   const defaultColumns = useCallback(
     data => {
       return [
@@ -74,8 +72,7 @@ const InvoiceList = () => {
       <View style={styles.header}>
         <Text style={styles.title}>Invoices</Text>
         <View style={styles.newInvoiceContainer}>
-        
-          <Text style={styles.newInvoiceText} onPress={()=>navigation.navigate('Sales Invoice')}>New Invoices</Text>
+          <Text style={styles.newInvoiceText}>New Invoices</Text>
           <Icon
             name="plus-circle"
             size={20}
