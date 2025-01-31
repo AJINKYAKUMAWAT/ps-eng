@@ -27,7 +27,7 @@ const LoginScreeen = () => {
   const toast = useToast();
 
   useEffect(() => {
-    if (auth) {
+    if (auth && auth?.remember === 'true') {
       setLoginObj({
         username: auth.username, // Populate from auth when available
         password: auth.password,
@@ -60,15 +60,13 @@ const LoginScreeen = () => {
         .then(async res => {
           const userdetails = {            
             username:loginObj.username,
-            password:loginObj.password
+            password:loginObj.password,
+            remember:isSelected ? 'true' : 'false'
           }
           await AsyncStorage.setItem('user', JSON.stringify({...userdetails,userId:res?.data?.data?.userID,}));
           await AsyncStorage.setItem('token', res?.data?.data?.apiToken);
-          if(isSelected){
-            setAuth(userdetails);
-          }else{
-            setAuth(null)
-          }
+          setAuth(userdetails);
+         
           setIsLoggedIn(true);
           setLoader(false);
           if (res) {

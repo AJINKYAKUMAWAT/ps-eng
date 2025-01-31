@@ -1,16 +1,21 @@
-import React from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {
   ScrollView,
   SafeAreaView,
   StyleSheet,
 } from 'react-native';
-import { useScrollToTop } from '@react-navigation/native';
+import { useIsFocused, useScrollToTop } from '@react-navigation/native';
 import Dashboard from '../Dashboard';
 
 export function HomeScreen() {
     const ref = React.useRef(null);
+    const isFocused = useIsFocused();
   
-    useScrollToTop(ref);
+    useEffect(() => {
+      if (isFocused && ref.current) {
+        ref.current.scrollTo({ y: 0, animated: true });
+      }
+    }, [isFocused]);
     
     return (
       <SafeAreaView style={styles.safeArea}>
