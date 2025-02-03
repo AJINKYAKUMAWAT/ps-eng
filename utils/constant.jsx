@@ -1,10 +1,13 @@
+/* eslint-disable prettier/prettier */
+// eslint-disable-next-line prettier/prettier
 import axios from "axios";
 
 export const BASE_URL = 'https://psengg.gstinvoice.in/'
 
 export const API_ENDPOINT = {
     LOGIN:'xadmin/api/',
-    LOGGEDIN_USER:''
+    LOGGEDIN_USER:'',
+    INVOICE_LIST:'?order=ASC&limit=20&orderPar=invoiceNo&currentPage=1'
 }
 
 export const ERROR_MESSAGES = {

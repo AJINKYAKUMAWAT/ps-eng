@@ -1,3 +1,5 @@
+/* eslint-disable prettier/prettier */
+// eslint-disable-next-line prettier/prettier
 import persistReducer from "redux-persist/es/persistReducer";
 import { rootReducer } from "./reducer";
 import { configureStore } from "@reduxjs/toolkit";

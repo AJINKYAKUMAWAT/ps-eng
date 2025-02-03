@@ -1,12 +1,16 @@
-import React, {useCallback, useState} from 'react';
+/* eslint-disable prettier/prettier */
+import React, { useCallback, useEffect, useState } from 'react';
 import TableList from '../../components/common/TableList';
-import {Text, View, StyleSheet, TouchableOpacity} from 'react-native';
-import {typography} from '../../theme/typography';
+import { Text, View, StyleSheet, TouchableOpacity } from 'react-native';
+import { typography } from '../../theme/typography';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useNavigation } from '@react-navigation/native';
 import ControlModal from '../../components/common/Modal';
-import { CONFIRMATION_MESSAGES, DELETED_MESSAGES } from '../../utils/constant';
-import {useToast} from 'react-native-toast-notifications';
+import { API_ENDPOINT, CONFIRMATION_MESSAGES } from '../../utils/constant';
+import { useToast } from 'react-native-toast-notifications';
+import { useDispatch } from 'react-redux';
+import { getInvoice } from '../../redux/invoice/InvoiceSlice';
+import axiosInstance from '../../utils/axios';
 
 const data = [
   {
@@ -40,104 +44,100 @@ const data = [
 ];
 
 const InvoiceList = () => {
-  const toast = useToast()
-  const [showModal,setShowModal] = useState(false)
-      const navigation = useNavigation()
-  
-  const defaultColumns = useCallback(
-    data => {
-      return [
-        {
-          id: '1',
-          title: 'Desert',
-          data: data.map(i => <Text>{i.name}</Text>),
-          collapse: true,
-        },
-        {
-          id: '2',
-          title: 'Calories',
-          data: data.map(i => <Text>{i.calories}</Text>),
-        },
-        {
-          id: '3',
-          title: 'Fat',
-          data: data.map(i => <Text>{i.fat}</Text>),
-        },
-        {
-          id: '4',
-          title: 'Action',
-          data: data.map(i => <Text>{i.fat}</Text>),
-        },
-      ];
-    },
-    [data],
-  );
+  const dispatch = useDispatch();
+  const toast = useToast();
+  const [showModal, setShowModal] = useState(false);
+  const navigation = useNavigation();
+
+  useEffect(() => {
+    const headers = {
+      xAction:'getInvoice'
+    }
+    dispatch(getInvoice(axiosInstance,API_ENDPOINT.INVOICE_LIST,headers));
+  }, [dispatch]);
+
+  const defaultColumns = useCallback((data) => {
+    return [
+      {
+        id: '1',
+        title: 'Dessert',
+        data: data.map((i) => <Text key={i.key}>{i.title}</Text>),
+        collapse: true,
+      },
+      {
+        id: '2',
+        title: 'Calories',
+        data: data.map((i) => <Text key={i.key}>{i.calories}</Text>),
+      },
+      {
+        id: '3',
+        title: 'Fat',
+        data: data.map((i) => <Text key={i.key}>{i.fat}</Text>),
+      },
+      {
+        id: '4',
+        title: 'Action',
+        data: data.map((i) => (
+          <TouchableOpacity key={i.key} onPress={() => setShowModal(true)}>
+            <Text style={styles.deleteText}>Delete</Text>
+          </TouchableOpacity>
+        )),
+      },
+    ];
+  }, []);
 
   const onEdit = () => {
-    navigation.navigate('Edit Sales Invoice')
-  }
+    navigation.navigate('Edit Sales Invoice');
+  };
 
   const onCancel = () => {
-    setShowModal(false)
-  }
+    setShowModal(false);
+  };
 
   const onDelete = () => {
-    setShowModal(false)
-    toast.show('Delete Successfully', {
-      data: {
-        type: 'success',
-        message: 'Delete Successfully',
-        placement: 'top',
-        duration: 4000,
-        animationType: 'slide-in',
-      },
+    setShowModal(false);
+    toast.show('Deleted Successfully', {
+      type: 'success',
+      placement: 'top',
+      duration: 4000,
+      animationType: 'slide-in',
     });
-  }
+  };
 
   const columns = defaultColumns(data);
-
-
 
   return (
     <View>
       <View style={styles.header}>
         <Text style={styles.title}>Invoices</Text>
-        <TouchableOpacity style={styles.newInvoiceContainer} onPress={()=>navigation.navigate('Add Sales Invoice')}>
+        <TouchableOpacity
+          style={styles.newInvoiceContainer}
+          onPress={() => navigation.navigate('Add Sales Invoice')}
+        >
           <Text style={styles.newInvoiceText}>New Invoices</Text>
-          <Icon
-            name="plus-circle"
-            size={20}
-            color="#4894FE"
-            style={styles.icon}
-          />
+          <Icon name="plus-circle" size={20} color="#4894FE" style={styles.icon} />
         </TouchableOpacity>
       </View>
       <View style={styles.header2}>
-        <Text style={{color: '#4894FE',fontFamily:typography.boldPoppins}}>Home/Invoices</Text>
+        <Text style={styles.breadcrumbText}>Home / Invoices</Text>
       </View>
-      <TableList data={data} colums={columns} enableSearch={true} onDelete={()=>setShowModal(true)} onPress={onEdit}/>
-      <ControlModal showModal={showModal} onCancel={onCancel} onPress={onDelete} CONFIRMATION_MESSAGES={CONFIRMATION_MESSAGES.INVOICE_DELETE}/>
+      <TableList data={data} columns={columns} enableSearch={true} onDelete={() => setShowModal(true)} onPress={onEdit} />
+      <ControlModal showModal={showModal} onCancel={onCancel} onPress={onDelete} confirmationMessage={CONFIRMATION_MESSAGES.INVOICE_DELETE} />
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   header: {
-    paddingLeft: 30,
-    paddingRight: 30,
+    paddingHorizontal: 30,
     paddingTop: 30,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
   },
   header2: {
-    paddingLeft: 30,
-    paddingRight: 30,
-    paddingBottom: 15,
-    paddingTop: 15,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    paddingHorizontal: 30,
+    paddingVertical: 15,
   },
   title: {
     color: '#303841',
@@ -152,11 +152,19 @@ const styles = StyleSheet.create({
     color: '#4894FE',
     fontSize: 15,
     fontFamily: typography.boldPoppins,
-    marginRight: 5, // Add space between text and icon
-    textDecorationLine: 'underline', // Adds underline
+    marginRight: 5,
+    textDecorationLine: 'underline',
   },
   icon: {
-    marginTop: 2, // Adjust the alignment to center the icon vertically
+    marginTop: 2,
+  },
+  breadcrumbText: {
+    color: '#4894FE',
+    fontFamily: typography.boldPoppins,
+  },
+  deleteText: {
+    color: 'red',
+    textDecorationLine: 'underline',
   },
 });
 

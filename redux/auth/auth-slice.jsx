@@ -1,3 +1,5 @@
+/* eslint-disable prettier/prettier */
+// eslint-disable-next-line prettier/prettier
 import { createSlice } from '@reduxjs/toolkit';
 import {
   getLoggedInUsersDetails,
@@ -60,51 +62,42 @@ const getToken = async (credentials) => {
   }
 };
 
+export const handleLogin = (credentials) => async (dispatch) => {
+  dispatch(setAuthLoading(true));
+  try {
+    const loginResponse = await getToken(credentials);
 
-export const handleLogin =
-  (credentials) => async (dispatch) => {
-    dispatch(setAuthLoading(true));
-    try {
-      const loginResponse = await getToken(credentials);
+    if (loginResponse.err === 0) {
+      const { apiToken, apiTokenExpiry } = loginResponse.data;
 
-      if (loginResponse.err === 0) {
-        const { apiToken, apiTokenExpiry } = loginResponse.data;
+      // Dispatch login and set user details
+      dispatch(login({ accessToken: apiToken }));
+      dispatch(setUser({ apiTokenExpiry }));
 
-        // Dispatch login and set user details
-        dispatch(
-          login({
-            accessToken: apiToken,
-          })
-        );
-
-        dispatch(
-          setUser({
-            apiTokenExpiry,
-          })
-        );
-
-        // await AsyncStorage.setItem(
-        //   'auth',
-        //   JSON.stringify({
-        //     isAuthenticated: true,
-        //     accessToken: apiToken,
-        //   })
-        // );
-
-        dispatch(setAuthLoading(false));
-      } else {
-        throw new Error(loginResponse.message || 'Login failed');
-      }
-    } catch (error) {
-      console.error('Login error:', error);
-      dispatch(handleLogout());
-      dispatch(setAuthLoading(false));
-      throw error;
+      await AsyncStorage.setItem(
+        'auth',
+        JSON.stringify({
+          isAuthenticated: true,
+          accessToken: apiToken,
+        })
+      );
+    } else {
+      throw new Error(loginResponse.message || 'Login failed');
     }
-  };
+  } catch (error) {
+    console.error('Login error:', error);
+    dispatch(handleLogout());
+  } finally {
+    dispatch(setAuthLoading(false));
+  }
+};
 
-
-export const handleLogout = () => (dispatch) => {
+export const handleLogout = () => async (dispatch) => {
+  try {
+    await AsyncStorage.removeItem('auth'); // Clear auth data from storage
+  } catch (error) {
+    console.error('Error clearing auth storage:', error);
+  }
   dispatch(logout());
   dispatch(removeUser());
 };
