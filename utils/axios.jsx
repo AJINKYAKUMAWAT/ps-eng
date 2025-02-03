@@ -10,15 +10,13 @@ const axiosInstance = axios.create({
 axiosInstance.interceptors.request.use(
   async (config) => {
     const token = await AsyncStorage.getItem('token'); // Retrieve token
-    console.log('Retrieved Token:', token); // Debugging log
 
     config.headers = {
       ...config.headers,
-      apiToken: "sxgbwr3h2dwyqcjx7",  // Ensure token is not null
+      apiToken: "b6ddn478bafhxw84y",  // Ensure token is not null
       // xAction: 'getInvoice', // Replace with correct xAction value
     };
 
-    console.log('Final Headers:', config.headers); // Debugging log
     return config;
   },
   (error) => Promise.reject(error)

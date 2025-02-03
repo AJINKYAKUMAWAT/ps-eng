@@ -6,85 +6,70 @@ import { typography } from '../../theme/typography';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useNavigation } from '@react-navigation/native';
 import ControlModal from '../../components/common/Modal';
-import { API_ENDPOINT, CONFIRMATION_MESSAGES } from '../../utils/constant';
+import {  CONFIRMATION_MESSAGES } from '../../utils/constant';
 import { useToast } from 'react-native-toast-notifications';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { getInvoice } from '../../redux/invoice/InvoiceSlice';
 import axiosInstance from '../../utils/axios';
 
-const data = [
-  {
-    key: 1,
-    title: 'Cupcake',
-    calories: 356,
-    fat: 16,
-    details: 'Delicious cupcake with vanilla frosting.',
-  },
-  {
-    key: 2,
-    title: 'Eclair',
-    calories: 262,
-    fat: 16,
-    details: 'Chocolate-filled eclair with rich cream.',
-  },
-  {
-    key: 3,
-    title: 'Frozen yogurt',
-    calories: 159,
-    fat: 6,
-    details: 'Low-fat frozen yogurt, perfect for summer.',
-  },
-  {
-    key: 4,
-    title: 'Gingerbread',
-    calories: 305,
-    fat: 3.7,
-    details: 'Classic gingerbread with a spicy touch.',
-  },
-];
-
 const InvoiceList = () => {
+  const {invoiceList,total} = useSelector(state => state.invoice)
   const dispatch = useDispatch();
   const toast = useToast();
   const [showModal, setShowModal] = useState(false);
   const navigation = useNavigation();
+  const [queryParams,setQueryParams] = useState({
+    order: 'ASC',
+    limit: 10,
+    orderPar: 'invoiceNo',
+    currentPage: 1,
+  })
 
   useEffect(() => {
+    const params = {...queryParams}
     const headers = {
-      xAction:'getInvoice'
-    }
-    dispatch(getInvoice(axiosInstance,API_ENDPOINT.INVOICE_LIST,headers));
-  }, [dispatch]);
+      xAction: 'getInvoice',
+    };
 
-  const defaultColumns = useCallback((data) => {
+    console.log("queryParams",params)
+  
+    dispatch(getInvoice(axiosInstance,params, headers));
+  }, [dispatch,queryParams]);
+
+  
+
+  const defaultColumns = useCallback(() => {
     return [
       {
         id: '1',
-        title: 'Dessert',
-        data: data.map((i) => <Text key={i.key}>{i.title}</Text>),
+        title: 'Invoice',
+        field:'invoiceNo',
+        data: (row) => <Text>{row.invoiceNo}</Text>, // Dynamically render cell content
         collapse: true,
       },
       {
         id: '2',
-        title: 'Calories',
-        data: data.map((i) => <Text key={i.key}>{i.calories}</Text>),
+        title: 'Date',
+        field:'invoiceDate',
+        data: (row) => <Text>{row.invoiceDate}</Text>,
       },
       {
         id: '3',
-        title: 'Fat',
-        data: data.map((i) => <Text key={i.key}>{i.fat}</Text>),
+        title: 'Customer',
+        field:'custVendName',
+        data: (row) => <Text>{row.custVendName}</Text>,
       },
       {
         id: '4',
         title: 'Action',
-        data: data.map((i) => (
-          <TouchableOpacity key={i.key} onPress={() => setShowModal(true)}>
+        data: (row) => (
+          <TouchableOpacity onPress={() => setShowModal(true)}>
             <Text style={styles.deleteText}>Delete</Text>
           </TouchableOpacity>
-        )),
+        ),
       },
     ];
-  }, []);
+  }, []);;
 
   const onEdit = () => {
     navigation.navigate('Edit Sales Invoice');
@@ -104,7 +89,8 @@ const InvoiceList = () => {
     });
   };
 
-  const columns = defaultColumns(data);
+  const columns = defaultColumns();
+
 
   return (
     <View>
@@ -121,7 +107,7 @@ const InvoiceList = () => {
       <View style={styles.header2}>
         <Text style={styles.breadcrumbText}>Home / Invoices</Text>
       </View>
-      <TableList data={data} columns={columns} enableSearch={true} onDelete={() => setShowModal(true)} onPress={onEdit} />
+      <TableList data={invoiceList} setQueryParams={setQueryParams} queryParams={queryParams} total={total} columns={columns} enableSearch={true} onDelete={() => setShowModal(true)} onPress={onEdit} />
       <ControlModal showModal={showModal} onCancel={onCancel} onPress={onDelete} confirmationMessage={CONFIRMATION_MESSAGES.INVOICE_DELETE} />
     </View>
   );

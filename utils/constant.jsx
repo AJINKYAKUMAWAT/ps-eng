@@ -21,9 +21,9 @@ export const axiosPrivate = axios.create({
   });
 
   export const InvoiceListData={
-    title: 'title',
-    calories: 'calories',
-    fat: 'fat',
+    invoiceNo: 'invoiceNo',
+    invoiceDate: 'invoiceDate',
+    custVendName: 'custVendName',
   }
   
 
