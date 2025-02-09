@@ -10,8 +10,9 @@ import {
   ScrollView,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import {InvoiceListData} from '../../utils/constant';
+import {dynamicRows} from '../../utils/constant';
 import CustomPagination from './CustomPagination';
+import {Loader} from '../../AtomicComponents/Loader';
 
 if (
   Platform.OS === 'android' &&
@@ -29,6 +30,10 @@ const TableList = ({
   total,
   setQueryParams,
   queryParams,
+  loading,
+  dynamicRows,
+  pagination,
+  rendor
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [expandedRows, setExpandedRows] = useState({}); // Track expanded rows
@@ -95,7 +100,19 @@ const TableList = ({
     });
   };
 
-  console.log('columns', columns);
+  if (loading) {
+    return (
+      <View
+        style={{
+          display: 'flex',
+          width: '100%',
+          height: '100%',
+          marginTop: '50%',
+        }}>
+        <Loader />
+      </View>
+    );
+  }
 
   return (
     <ScrollView style={{marginBottom: 150}}>
@@ -115,36 +132,38 @@ const TableList = ({
         <DataTable>
           {/* Table Headers */}
           <DataTable.Header>
-            {columns.map(column => (
+            {columns?.map(column => (
               <DataTable.Title
                 key={column.id}
                 style={{justifyContent: 'center'}}
-                textStyle={{color: '#000', fontSize: 15}}
+                textStyle={{color: '#000', fontSize: 12}}
                 onPress={() => handleSort(column)} // Ensure correct column key is used
               >
                 {column.title}
-                <Icon
-                  name={
-                    queryParams.order === 'ASC' &&
-                    queryParams.orderPar === column.field
-                      ? 'arrow-up'
-                      : 'arrow-down'
-                  }
-                  color={
-                    queryParams.orderPar === column.field
-                      ? '#4894FE'
-                      : '#C4C4C4'
-                  } // Change color here
-                  size={16}
-                />
+                {column.sortable && (
+                  <Icon
+                    name={
+                      queryParams.order === 'ASC' &&
+                      queryParams.orderPar === column.field
+                        ? 'arrow-up'
+                        : 'arrow-down'
+                    }
+                    color={
+                      queryParams.orderPar === column.field
+                        ? '#4894FE'
+                        : '#C4C4C4'
+                    } // Change color here
+                    size={14}
+                  />
+                )}
               </DataTable.Title>
             ))}
           </DataTable.Header>
 
           {/* Table Rows */}
-          {filteredData.map(item => {
+          {filteredData.map((item, index) => {
             return (
-              <View key={item.Sr}>
+              <View key={index}>
                 <TouchableRipple>
                   <DataTable.Row>
                     <Icon
@@ -157,8 +176,8 @@ const TableList = ({
                       style={{marginRight: 10, marginTop: 15}}
                     />
 
-                    {Object.keys(InvoiceListData).map((key, index) => {
-                      const value = item[InvoiceListData[key]] || ''; // Fallback for undefined values
+                    {Object.keys(dynamicRows).map((key, index) => {
+                      const value = item[dynamicRows[key]] || ''; // Fallback for undefined values
                       return (
                         <DataTable.Cell key={index}>
                           <Text style={{color: '#000', fontSize: 12}}>
@@ -178,7 +197,7 @@ const TableList = ({
                           size={20}
                         />
                         <Icon
-                          onPress={onDelete}
+                          onPress={() => onDelete(item.Sr)}
                           name="trash-can-outline"
                           color="#f94944"
                           size={20}
@@ -193,81 +212,20 @@ const TableList = ({
                   </DataTable.Row>
                 </TouchableRipple>
 
-                {/* Expandable Row */}
-                {expandedRows[item.Sr] && (
-                  <View style={styles.collapsibleContent}>
-                    <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                      {/* Left Column */}
-                      <View style={{flex: 1, paddingRight: 10}}>
-                        <View style={styles.row}>
-                          <Text style={styles.label}>
-                            GSTN <Text style={styles.value}>{item.GSTin}</Text>
-                          </Text>
-                        </View>
-                        <View style={styles.row}>
-                          <Text style={styles.label}>
-                            Credit Period{' '}
-                            <Text style={styles.value}>
-                              {item.creditPeriod
-                                ? `${item.creditPeriod} Days`
-                                : 0}
-                            </Text>
-                          </Text>
-                        </View>
-                      </View>
-
-                      {/* Divider */}
-                      <View style={styles.divider} />
-
-                      {/* Right Column */}
-                      <View style={{flex: 1}}>
-                        <View style={styles.row}>
-                          <Text style={styles.label}>Taxable ₹ : </Text>
-                          <Text style={styles.value}>
-                            {item.totTaxableAmount}
-                          </Text>
-                        </View>
-                        <View style={styles.row}>
-                          <Text style={styles.label}>CGST (9%) : </Text>
-                          <Text style={styles.value}>{item.totCGST}</Text>
-                        </View>
-                        <View style={styles.row}>
-                          <Text style={styles.label}>SGST (9%) : </Text>
-                          <Text style={styles.value}>{item.totSGST}</Text>
-                        </View>
-                        <View style={styles.row}>
-                          <Text style={styles.label}>IGST (9%) : </Text>
-                          <Text style={styles.value}>{item.totIGST}</Text>
-                        </View>
-                        <View style={styles.row}>
-                          <Text style={styles.label}>Grand Tot : </Text>
-                          <Text style={styles.value}>{item.grandTotal}</Text>
-                        </View>
-                        <View style={styles.row}>
-                          <Text style={styles.label}>Tot Received : </Text>
-                          <Text style={styles.value}>
-                            {item.receivedAmount}
-                          </Text>
-                        </View>
-                        <View style={styles.row}>
-                          <Text style={styles.label}>Balance : </Text>
-                          <Text style={styles.value}>{item.balanceAmount}</Text>
-                        </View>
-                      </View>
-                    </View>
-                  </View>
-                )}
+               { rendor(expandedRows,item)}
               </View>
             );
           })}
 
           {/* Pagination Component */}
-          <CustomPagination
-            totalItems={total}
-            itemsPerPage={itemsPerPage}
-            currentPage={page}
-            setPage={setPage}
-          />
+          {pagination && (
+            <CustomPagination
+              totalItems={total}
+              itemsPerPage={itemsPerPage}
+              currentPage={page}
+              setPage={setPage}
+            />
+          )}
         </DataTable>
       </View>
     </ScrollView>

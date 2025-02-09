@@ -43,7 +43,6 @@ export const AuthProvider = ({children}) => {
       setLoading(true);
       const tokenKey = 'token';
       const token = await AsyncStorage.getItem(tokenKey);
-      console.log('Previous Token Data found in storage:', token);
     } catch (error) {
       console.error('Error fetching token:', error);
     }

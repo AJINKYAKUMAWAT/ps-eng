@@ -13,7 +13,7 @@ axiosInstance.interceptors.request.use(
 
     config.headers = {
       ...config.headers,
-      apiToken: "b6ddn478bafhxw84y",  // Ensure token is not null
+      apiToken: token,  // Ensure token is not null
       // xAction: 'getInvoice', // Replace with correct xAction value
     };
 

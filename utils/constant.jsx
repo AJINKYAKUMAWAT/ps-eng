@@ -2,7 +2,7 @@
 // eslint-disable-next-line prettier/prettier
 import axios from "axios";
 
-export const BASE_URL = 'https://psengg.gstinvoice.in/'
+export const BASE_URL = 'https://devproject.co.in/psengg/xadmin/api'
 
 export const API_ENDPOINT = {
     LOGIN:'xadmin/api/',
@@ -26,6 +26,11 @@ export const axiosPrivate = axios.create({
     custVendName: 'custVendName',
   }
   
+  export const AddInvoiceListData={
+    productTitle: 'productTitle',
+    hsnCode: 'hsnCode',
+    orderNo: 'orderNo',
+  }
 
 
   export const CUSTOMER_DATA = [

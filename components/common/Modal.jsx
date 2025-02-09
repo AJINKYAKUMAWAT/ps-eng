@@ -5,7 +5,7 @@ import ButtonWithIcon from './ButtonWithIcon';
 import {typography} from '../../theme/typography';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
-function ControlModal({showModal,onPress,onCancel,CONFIRMATION_MESSAGES}) {
+function ControlModal({showModal,onPress,onCancel,confirmationMessage}) {
 
   return (
     <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
@@ -40,7 +40,7 @@ function ControlModal({showModal,onPress,onCancel,CONFIRMATION_MESSAGES}) {
               color: '#000',
               fontFamily: typography.primary,
             }}>
-            {CONFIRMATION_MESSAGES}
+            {confirmationMessage}
           </Text>
           <View
             style={{

@@ -20,6 +20,7 @@
     "@reduxjs/toolkit": "^2.4.0",
     "@rneui/themed": "^4.0.0-rc.8",
     "axios": "^1.7.9",
+    "dayjs": "^1.11.13",
     "emoji-mart-native": "^0.6.5-beta",
     "react": "18.2.0",
     "react-native": "0.74.3",

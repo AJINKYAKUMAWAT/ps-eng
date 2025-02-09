@@ -51,7 +51,7 @@ const LoginScreeen = () => {
       setLoader(true);
       axiosPrivate
         .post(
-          API_ENDPOINT.LOGIN,
+          '/',
           {}, // Empty body since you're sending data in headers
           {
             headers: payload,
