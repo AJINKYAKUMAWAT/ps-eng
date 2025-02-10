@@ -1,58 +1,108 @@
-import React, {useCallback, useMemo, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import TableList from '../../components/common/TableList';
 import {Text, View, StyleSheet, ScrollView} from 'react-native';
 import {typography} from '../../theme/typography';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import DropdownComponent from '../../components/common/DropdownText';
 import TextField from '../../components/common/TextField';
 import MyDatePicker from '../../components/common/Datepicker';
 import DateAndTimePicker from '../../components/common/DateAndTimepicker';
-import Button from '../../AtomicComponents/Button';
 import ButtonWithIcon from '../../components/common/ButtonWithIcon';
-import {CONFIRMATION_MESSAGES, CUSTOMER_DATA, MATERIAL_TYPE} from '../../utils/constant';
-import { useNavigation } from '@react-navigation/native';
+import {AddInvoiceListData, CONFIRMATION_MESSAGES} from '../../utils/constant';
+import {useNavigation} from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useRoute } from '@react-navigation/native';
+import {useRoute} from '@react-navigation/native';
 import ControlModal from '../../components/common/Modal';
+import dayjs from 'dayjs';
 import {useToast} from 'react-native-toast-notifications';
+import {useDispatch, useSelector} from 'react-redux';
+import {
+  addInvoice,
+  getCustomer,
+  getInvoice,
+  getMaterial,
+} from '../../redux/invoice/InvoiceSlice';
+import axiosInstance from '../../utils/axios';
 
-const data = [
-  {
-    key: 1,
-    title: 'Cupcake',
-    calories: 356,
-    fat: 16,
-    details: 'Delicious cupcake with vanilla frosting.',
-  },
-  {
-    key: 2,
-    title: 'Eclair',
-    calories: 262,
-    fat: 16,
-    details: 'Chocolate-filled eclair with rich cream.',
-  },
-  {
-    key: 3,
-    title: 'Frozen yogurt',
-    calories: 159,
-    fat: 6,
-    details: 'Low-fat frozen yogurt, perfect for summer.',
-  },
-  {
-    key: 4,
-    title: 'Gingerbread',
-    calories: 305,
-    fat: 3.7,
-    details: 'Classic gingerbread with a spicy touch.',
-  },
-];
+const render = (expandedRows,item) => {
+  return(
+    <>    
+      {expandedRows[item.Sr] && (
+        <View style={styles.collapsibleContent}>
+          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <View style={{flex: 1, paddingRight: 10}}>
+              <View style={styles.row}>
+                <Text style={styles.label}>
+                  GSTN <Text style={styles.value}>{item.GSTin}</Text>
+                </Text>
+              </View>
+              <View style={styles.row}>
+                <Text style={styles.label}>
+                  Credit Period{' '}
+                  <Text style={styles.value}>
+                    {item.creditPeriod
+                      ? `${item.creditPeriod} Days`
+                      : 0}
+                  </Text>
+                </Text>
+              </View>
+            </View>
+
+            {/* Divider */}
+            <View style={styles.divider} />
+
+            {/* Right Column */}
+            <View style={{flex: 1}}>
+              <View style={styles.row}>
+                <Text style={styles.label}>Taxable ₹ : </Text>
+                <Text style={styles.value}>
+                  {item.totTaxableAmount}
+                </Text>
+              </View>
+              <View style={styles.row}>
+                <Text style={styles.label}>CGST (9%) : </Text>
+                <Text style={styles.value}>{item.totCGST}</Text>
+              </View>
+              <View style={styles.row}>
+                <Text style={styles.label}>SGST (9%) : </Text>
+                <Text style={styles.value}>{item.totSGST}</Text>
+              </View>
+              <View style={styles.row}>
+                <Text style={styles.label}>IGST (9%) : </Text>
+                <Text style={styles.value}>{item.totIGST}</Text>
+              </View>
+              <View style={styles.row}>
+                <Text style={styles.label}>Grand Tot : </Text>
+                <Text style={styles.value}>{item.grandTotal}</Text>
+              </View>
+              <View style={styles.row}>
+                <Text style={styles.label}>Tot Received : </Text>
+                <Text style={styles.value}>
+                  {item.receivedAmount}
+                </Text>
+              </View>
+              <View style={styles.row}>
+                <Text style={styles.label}>Balance : </Text>
+                <Text style={styles.value}>{item.balanceAmount}</Text>
+              </View>
+            </View>
+          </View>
+        </View>
+      )}
+      </>
+  )
+}
+
 
 const AddInvoice = () => {
-  const toast = useToast()
-    const [showModal,setShowModal] = useState(false)
-  
-    const navigation = useNavigation()
-    const route = useRoute();
+  const {invoiceList, isLoading, total, customer, material,itemList} = useSelector(
+    state => state.invoice,
+  );
+  const dispatch = useDispatch();
+  const toast = useToast();
+  const [showModal, setShowModal] = useState(false);
+
+  const navigation = useNavigation();
+  const route = useRoute();
   const [itemObj, setItemObj] = useState({
     customer: null,
     invoiceDate: null,
@@ -63,57 +113,143 @@ const AddInvoice = () => {
     storeCode: '',
   });
   const [error, setError] = useState(false);
-  const defaultColumns = useCallback(data => {
+
+  const [queryParams, setQueryParams] = useState({
+    order: 'ASC',
+    limit: 10,
+    orderPar: 'Sr',
+    currentPage: 1,
+  });
+
+  useEffect(() => {
+    dispatch(getCustomer(axiosInstance, {xAction: 'customerDropdownData'}));
+    dispatch(getMaterial(axiosInstance, {xAction: 'materialTypeDropdownData'}));
+    dispatch(
+      getInvoice(
+        axiosInstance,
+        {...queryParams, currentPage: 1, Sr: 30},
+        {xAction: 'getInvoice'},
+      ),
+    );
+  }, [dispatch, queryParams]);
+
+  const defaultColumns = useCallback(() => {
     return [
       {
         id: '1',
-        title: 'Desert',
-        data: data.map(i => <Text>{i.name}</Text>),
+        title: 'Sr. Product',
+        field: 'productTitle',
+        data: row => <Text>{row.productTitle}</Text>, // Dynamically render cell content
         collapse: true,
       },
       {
         id: '2',
-        title: 'Calories',
-        data: data.map(i => <Text>{i.calories}</Text>),
+        title: 'HSN/SAC',
+        field: 'hsnCode',
+        data: row => <Text>{row.hsnCode}</Text>,
       },
       {
         id: '3',
-        title: 'Fat',
-        data: data.map(i => <Text>{i.fat}</Text>),
+        title: 'Order No.',
+        field: 'orderNo',
+        data: row => <Text>{row.orderNo}</Text>,
       },
       {
         id: '4',
         title: 'Action',
-        data: data.map(i => <Text>{i.fat}</Text>),
+        data: row => (
+          <TouchableOpacity onPress={() => setShowModal(true)}>
+            <Text style={styles.deleteText}>Delete</Text>
+          </TouchableOpacity>
+        ),
       },
     ];
   }, []);
 
-  const columns = useMemo(() => defaultColumns(data), []);
+  const columns = defaultColumns();
 
-  const addItem = async() => {
-    // if (!itemObj.customer || !itemObj.materialType) {
-    //   setError(true);
-    // }
+  const addItem = async () => {
     await AsyncStorage.setItem('path', route.name);
-    navigation.navigate('Add Line Item')
+    navigation.navigate('Add Line Item');
   };
 
-  const onSubmit = () => {
-    navigation.navigate('Sales Invoice')
-  }
+  console.log("itemList",itemList)
 
-  const onPress =async () => {
+  const onSubmit = () => {
+    if (!itemObj.customer || !itemObj.materialType) {
+      setError(true);
+    } else {
+      try {
+        const headers = {
+          xAction: 'addInvoice',
+        };
+        const payload = {
+          custVendID: Number(itemObj.customer),
+          saleInvoiceNo: 'IN/PS/24-25/268',
+          invoiceDate: dayjs(itemObj.invoiceDate).format('YYYY-MM-DD'),
+          dateTimeOfSupply: `${dayjs(itemObj.date).format('YYYY-MM-DD')} ${dayjs(itemObj.time).format('HH:mm:ss')}`,
+          isMatrialType: Number(itemObj.materialType),
+          creditPeriod: itemObj.creditPeriod,
+          storeCode: itemObj.storeCode,
+          product: [
+            {
+              productID: 110,
+              productDesc: 'product 1 Desc',
+              hsnCode: '1234',
+              challanNo: '1234',
+              thirdPartyOrderNo: '1234',
+              unitID: 3,
+              quantity: 100,
+              unitPrice: 250,
+              amount: 25000.0,
+              taxID: 9,
+              taxRate: 12.0,
+              CGST_RATE: 12.0,
+              SGST_RATE: 12.0,
+              cgst: 1500.0,
+              sgst: 1500.0,
+              igst: 0.0,
+              totAmt: 28000.0,
+            },
+          ],
+        };
+        dispatch(addInvoice(axiosInstance, headers, payload));
+        toast.show('Added Successfully', {
+          type: 'success',
+          placement: 'top',
+          duration: 4000,
+          animationType: 'slide-in',
+        });
+      } catch (error) {}
+    }
+    // navigation.navigate('Sales Invoice');
+  };
+
+  const onPress = async () => {
     await AsyncStorage.setItem('path', route.name);
-    navigation.navigate('Edit Line Item')
-  }
+    navigation.navigate('Edit Line Item');
+  };
+
+  const CUSTOMER_DATA = customer
+    ? Object.entries(customer).map(([key, value]) => ({
+        label: value?.trim(),
+        value: key,
+      }))
+    : [];
+
+  const MATERIAL_TYPE = material
+    ? Object.entries(material).map(([key, value]) => ({
+        label: value?.trim(),
+        value: key,
+      }))
+    : [];
 
   const onCancel = () => {
-    setShowModal(false)
-  }
+    setShowModal(false);
+  };
 
   const onDelete = () => {
-    setShowModal(false)
+    setShowModal(false);
     toast.show('Delete Successfully', {
       data: {
         type: 'success',
@@ -123,8 +259,9 @@ const AddInvoice = () => {
         animationType: 'slide-in',
       },
     });
-  }
+  };
 
+  const onEdit = () => {};
 
   return (
     <ScrollView style={{backgroundColor: '#F7F7F7'}}>
@@ -271,7 +408,23 @@ const AddInvoice = () => {
         />
       </View>
       <View style={{backgroundColor: '#fff'}}>
-        <TableList data={data} colums={columns} onPress={onPress} onDelete={()=>setShowModal(true)}/>
+        <TableList
+          dynamicRows={AddInvoiceListData}
+          loading={isLoading}
+          data={invoiceList[0]?.productData || []}
+          subData={invoiceList}
+          setQueryParams={setQueryParams}
+          queryParams={queryParams}
+          total={total}
+          columns={columns}
+          enableSearch={true}
+          onDelete={id => {
+            setId(id);
+            setShowModal(true);
+          }}
+          onPress={onEdit}
+          rendor={render}
+        />
       </View>
 
       <View
@@ -305,7 +458,12 @@ const AddInvoice = () => {
           />
         </View>
       </View>
-      <ControlModal onCancel={onCancel} showModal={showModal} onPress={onDelete} CONFIRMATION_MESSAGES={CONFIRMATION_MESSAGES.LINE_ITEM_DELETE}/>
+      <ControlModal
+        onCancel={onCancel}
+        showModal={showModal}
+        onPress={onDelete}
+        CONFIRMATION_MESSAGES={CONFIRMATION_MESSAGES.LINE_ITEM_DELETE}
+      />
     </ScrollView>
   );
 };
@@ -354,6 +512,34 @@ const styles = StyleSheet.create({
   },
   icon: {
     marginTop: 2, // Adjust the alignment to center the icon vertically
+  },
+  row: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 8,
+  },
+  label: {
+    color: '#333333',
+    fontWeight: 'bold',
+    fontSize: 11,
+    textAlign: 'right',
+  },
+  value: {
+    color: '#4894FE',
+    fontSize: 11,
+    textAlign: 'left',
+  },
+  divider: {
+    width: 1,
+    backgroundColor: '#ddd',
+    height: '100%',
+    marginHorizontal: 10,
+  },
+  collapsibleContent: {
+    padding: 20,
+    backgroundColor: '#F7F7F7',
+    borderBottomWidth: 1,
+    borderColor: '#ddd',
   },
 });
 
